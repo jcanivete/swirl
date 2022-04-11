@@ -1,4 +1,4 @@
-from .main import EVCA
+from .main import SWIRL
 
 from .vorticity import compute_vorticity
 from .swirlingstrength import compute_swirlingstrength
