@@ -119,7 +119,7 @@ class SWIRL:
 #
   def __init__( self, 
                 v: list, 
-                dl: list=[1,1], 
+                dl: list=[1.,1.], 
                 l: list=[1], 
                 S_param: list=[0.,0.,0.], 
                 crit: str='rortex', 
