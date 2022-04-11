@@ -290,6 +290,7 @@ class SWIRL:
       print('---')
       print('--- Parameters:')
       print('---')
+      print('---    dx               :',self.dl)
       print('---    l                :',self.l)
       print('---    S_param          :',self.S_param)
       print('---    crit             :',self.crit)

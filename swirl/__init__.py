@@ -7,4 +7,4 @@ from .evcmap import radius, direction
 from .utilities import vector2D, create_U
 from .cluster import compute_delta, compute_rho, prepare_data, compute_dc, clustering
 from .vortex import detection 
-from .plots import plot_decision
+from .plots import plot_decision, plot_evcmap, plot_vortices
