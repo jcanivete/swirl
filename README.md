@@ -17,7 +17,7 @@
 The SWirl Identification by Rotation centers Localization (`SWIRL`) is an automated vortex identification algorithm written in python based on the _Estimated Vortex Center_ (EVC) method (*Canivete Cuissa & Steiner, 2022, A&A (submitted)*). The only required input is a two-dimensional velocity time istance defined on a Cartesian grid, and it returns the list of the identified vortical structures.
 
 # _Work in progress_
-This repository is still work in progress. Code examples, tests, and licence will be added soon, as well as improvements concerning the handling of inputs and outputs of the code. For any question, please contact me at *jcanivete@ics.uzh.ch*.
+This repository is still work in progress. Code examples and tests will be added soon, as well as improvements concerning the handling of inputs and outputs of the code. For any question, please contact me at *jcanivete@ics.uzh.ch*.
 
 # Abstract
 Vortices are one of the fundamental features of turbulent fluid dynamics, yet it is extremely difficult to accurately and automatically identify vortical motions in, for example, simulations and observations of turbulent flows. We propose a new method for an accurate and reliable identification of vortices which requires the knowledge of the velocity field. The advantage of this method is that it accounts for both the local and global properties of the flow, which makes it robust to noise and reliable even in highly turbulent scenarios.  
@@ -46,14 +46,19 @@ Alternatively, you can add the folder where you saved the code to your PYTHONPAT
 
 # How to run
 The imported `SWIRL` object is a python class that contains the methods to run the algorithm.
-Given a 2D velocity field saved as a list of two-dimensional numpy arrays, `[vx, vy]`, a `SWIRL` class instance can be initialized as
+Given a 2D velocity field saved as a list of two-dimensional numpy arrays, `[vx, vy]`, and the size of the grid cells in the two dimensions `[dx, dy]`, a `SWIRL` class instance can be initialized as
 
 ```
->>> v = SWIRL([vx, vy])
+>>> v = SWIRL(v = [vx, vy], dl = [dx, dy])
 ```
+*Important!* 
 
-and the code can be successively be run with
+The spatial units of the velocity field and of the grid cell sizes must be the same, otherwise the identification algorithm won't work correctly. For example, 
+- [vx] = cm/s  --->   [dx] = cm 
 
+If the velocity field is given in units of grid cells per unit time, then the list `dl` can be initialized to `[1.0, 1.0]`.
+
+Once the object has been initialized, one can run the algorithm with
 ```
 >>> v.run()
 ```
