@@ -1,6 +1,17 @@
+"""
+test_criteria.py
+
+José Roberto Canivete Cuissa
+IRSOL, 15.08.2022
+
+----------------
+
+Unit test module for testing the implementation of mathematical criteria
+in the SWIRL code.
+"""
 # Imports
-import numpy as np
 import unittest
+import numpy as np
 from swirl import SWIRL
 
 class CriteriaTests(unittest.TestCase):
@@ -15,25 +26,25 @@ class CriteriaTests(unittest.TestCase):
         zero velocity field
         """
         # Size of grid
-        Nx, Ny = 10, 10  
+        nx, ny = 10, 10
         # Velocity field
-        vx, vy = np.zeros((Nx,Ny)), np.zeros((Nx,Ny)) 
+        vx, vy = np.zeros((nx,ny)), np.zeros((nx,ny))
         # Expected results
-        S_true = np.zeros((Nx,Ny))
-        W_true = np.zeros((Nx,Ny))
-        R_true = np.zeros((Nx,Ny))
+        swirling_str_true = np.zeros((nx,ny))
+        vorticity_true = np.zeros((nx,ny))
+        rortex_true = np.zeros((nx,ny))
         # SWIRL instance
-        s = SWIRL(v = [vx, vy], 
+        swirl = SWIRL(v = [vx, vy],
                   dl = [1.0, 1.0],
                   verbose=False)
-        # Computing quantities 
-        s.vorticity()
-        s.swirlingstrength()
-        s.rortex()
+        # Computing quantities
+        swirl.vorticity()
+        swirl.swirlingstrength()
+        swirl.rortex()
         # Testing
-        np.testing.assert_array_equal(s.S[0], S_true)
-        np.testing.assert_array_equal(s.W[0], W_true)
-        np.testing.assert_array_equal(s.R[0], R_true)
+        np.testing.assert_array_equal(swirl.S[0], swirling_str_true)
+        np.testing.assert_array_equal(swirl.W[0], vorticity_true)
+        np.testing.assert_array_equal(swirl.R[0], rortex_true)
 
     #----------------------------------------------
     @staticmethod
@@ -43,27 +54,27 @@ class CriteriaTests(unittest.TestCase):
         non-zero velocity field
         """
         # Size of grid
-        Nx, Ny = 10, 10  
+        nx, ny = 10, 10
         # Velocity field
         v_norm = 5.0
-        vx = v_norm*np.ones((Nx,Ny)) 
-        vy = v_norm*np.ones((Nx,Ny)) 
+        vx = v_norm*np.ones((nx,ny))
+        vy = v_norm*np.ones((nx,ny))
         # Expected results
-        S_true = np.zeros((Nx,Ny)) 
-        W_true = np.zeros((Nx,Ny))
-        R_true = np.zeros((Nx,Ny))
+        swirling_str_true = np.zeros((nx,ny))
+        vorticity_true = np.zeros((nx,ny))
+        rortex_true = np.zeros((nx,ny))
         # SWIRL instance
-        s = SWIRL(v = [vx, vy], 
+        swirl = SWIRL(v = [vx, vy],
                   dl = [1.0, 1.0],
                   verbose=False)
-        # Computing quantities 
-        s.vorticity()
-        s.swirlingstrength()
-        s.rortex()
+        # Computing quantities
+        swirl.vorticity()
+        swirl.swirlingstrength()
+        swirl.rortex()
         # Testing
-        np.testing.assert_array_equal(s.S[0], S_true)
-        np.testing.assert_array_equal(s.W[0], W_true)
-        np.testing.assert_array_equal(s.R[0], R_true)
+        np.testing.assert_array_equal(swirl.S[0], swirling_str_true)
+        np.testing.assert_array_equal(swirl.W[0], vorticity_true)
+        np.testing.assert_array_equal(swirl.R[0], rortex_true)
 
     #----------------------------------------------
     @staticmethod
@@ -73,29 +84,29 @@ class CriteriaTests(unittest.TestCase):
         velocity field.
         """
         # Size of grid
-        Nx, Ny = 10, 10  
+        nx, ny = 10, 10
         # Grid
-        xgrid, ygrid = np.meshgrid(np.arange(Nx),np.arange(Ny))
+        xgrid, ygrid = np.meshgrid(np.arange(nx),np.arange(ny))
         xgrid[...] = xgrid[...].T
         ygrid[...] = ygrid[...].T
         # Velocity field
         v_norm = 5.0
-        vx = v_norm*ygrid 
-        vy = np.zeros((Nx,Ny)) 
+        vx = v_norm*ygrid
+        vy = np.zeros((nx,ny))
         # Expected results
-        W_true = np.zeros((Nx,Ny))
-        W_true[1:-1,1:-1] = -v_norm  # Only internal part has non-zero value
-        S_true = np.zeros((Nx,Ny)) 
-        R_true = np.zeros((Nx,Ny))
+        vorticity_true = np.zeros((nx,ny))
+        vorticity_true[1:-1,1:-1] = -v_norm  # Only internal part has non-zero value
+        swirling_str_true = np.zeros((nx,ny))
+        rortex_true = np.zeros((nx,ny))
         # SWIRL instance
-        s = SWIRL(v = [vx, vy], 
+        swirl = SWIRL(v = [vx, vy],
                   dl = [1.0, 1.0],
                   verbose=False)
-        # Computing quantities 
-        s.vorticity()
-        s.swirlingstrength()
-        s.rortex()
+        # Computing quantities
+        swirl.vorticity()
+        swirl.swirlingstrength()
+        swirl.rortex()
         # Testing
-        np.testing.assert_array_equal(s.S[0], S_true)
-        np.testing.assert_array_equal(s.W[0], W_true)
-        np.testing.assert_array_equal(s.R[0], R_true)
+        np.testing.assert_array_equal(swirl.S[0], swirling_str_true)
+        np.testing.assert_array_equal(swirl.W[0], vorticity_true)
+        np.testing.assert_array_equal(swirl.R[0], rortex_true)
