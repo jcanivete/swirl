@@ -7,10 +7,11 @@
 
 
               IRSOL, 11.04.2022                      
-                                                   
- Author: *José Roberto Canivete Cuissa*              
- Email: *jcanivete@ics.uzh.ch*                       
-```  
+
+```                                                     
+Author: *José Roberto Canivete Cuissa*              
+Email: *jcanivete@ics.uzh.ch*                       
+
 
 
 # SWIRL code
