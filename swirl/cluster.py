@@ -248,27 +248,27 @@ def compute_dc(d, dc_coeff, dc_adaptive, dl):
 #
 ###############################################
   # Size of arrays
-  n = d.shape[0]
+    n = d.shape[0]
 
-  # If dc_adaptive is True, compute it according to % value
-  if dc_adaptive==True:
-    if n==1:
-      return 1.0
+    # If dc_adaptive is True, compute it according to % value
+    if dc_adaptive==True:
+        if n<=1:
+            return 1.0
+        else:
+            nc = int(n*dc_coeff/100)
+            if nc==0:
+                nc=1
+
+            # Reorder d from smaller to higher in each row
+            dord = np.sort(d, axis=1)
+
+            # dc for each row is at nc index, average over them
+            dc = np.mean(dord[:,nc])
     else:
-      nc = int(n*dc_coeff/100)
-      if nc==0:
-        nc=1
+        # Simply transform dc_coeff to code units (number of cells)
+        dc = dc_coeff/dl.norm
 
-      # Reorder d from smaller to higher in each row
-      dord = np.sort(d, axis=1)
-
-      # dc for each row is at nc index, average over them
-      dc = np.mean(dord[:,nc])
-  else:
-    # Simply transform dc_coeff to code units (number of cells)
-    dc = dc_coeff/dl.norm
-
-  return dc
+    return dc
 ##
 ##
 ##
