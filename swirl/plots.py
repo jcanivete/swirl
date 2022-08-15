@@ -1,13 +1,13 @@
 """
-
-plots.py
+SWIRL Code
+    plots.py
 
 José Roberto Canivete Cuissa
 IRSOL, 10.02.2021
 
 ----------------
 
-This code contains simple plotting routines for the SWIRL class
+This code contains simple plotting routines for the SWIRL class.
 """
 # Imports
 import numpy as np
