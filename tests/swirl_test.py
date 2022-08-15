@@ -1,5 +1,5 @@
 """
-test_criteria.py
+swirl_test.py
 
 José Roberto Canivete Cuissa
 IRSOL, 15.08.2022
@@ -17,8 +17,8 @@ from swirl import SWIRL
 
 class CriteriaTests(unittest.TestCase):
     """
-    Test cases to check the correctness of the mathematical criteria
-    involved in the SWIRL algorithm.
+    Test cases to check the correctness of the mathematical criteria involved
+    in the SWIRL algorithm.
     """
     @staticmethod
     def test_zero_velocity():
@@ -81,7 +81,7 @@ class CriteriaTests(unittest.TestCase):
 
     # ----------------------------------------------
     @staticmethod
-    def test_shear_flow():
+    def test_test_shear_flow():
         """
         Test vorticity, swirling strength and rortex with a shear flow.
         """
@@ -205,10 +205,12 @@ class CriteriaTests(unittest.TestCase):
         np.testing.assert_array_almost_equal(swirl.W[0], vort_true)
         np.testing.assert_array_almost_equal(swirl.R[0], rort_true)
 
-# ---------------------------------
+# ----------------------------------------------
+
+
 class IdentificationTests(unittest.TestCase):
     """
-    Test cases to check the correctness of the identification algorithm
+    Test cases to check the correctness of the identification process
     involved in the SWIRL algorithm.
     """
 
@@ -232,7 +234,7 @@ class IdentificationTests(unittest.TestCase):
         # Testing
         self.assertEqual(len(swirl.vortices), n_vortices_true)
 
-    # ------------
+    # ----------------------------------------------
     def test_const_velocity(self):
         """
         Test identification algorithm with a uniform constant velocity field
@@ -255,7 +257,7 @@ class IdentificationTests(unittest.TestCase):
         # Testing
         self.assertEqual(len(swirl.vortices), n_vortices_true)
 
-    # ------------
+    # ----------------------------------------------
     def test_shear_flow(self):
         """
         Test identification algorithm with a shear flow
@@ -282,7 +284,7 @@ class IdentificationTests(unittest.TestCase):
         # Testing
         self.assertEqual(len(swirl.vortices), n_vortices_true)
 
-    # ------------
+    # ----------------------------------------------
     def test_rotational_vortex(self):
         """
         Test identification algorithm with a with a rotational
@@ -312,7 +314,7 @@ class IdentificationTests(unittest.TestCase):
         # Testing
         self.assertEqual(len(swirl.vortices), n_vortices_true)
 
-    # ------------
+    # ----------------------------------------------
     def test_lamb_oseen_vortex(self):
         """
         Test identification algorithm with a with a Lamb Oseen
@@ -353,7 +355,7 @@ class IdentificationTests(unittest.TestCase):
         # Testing
         self.assertEqual(len(swirl.vortices), n_vortices_true)
 
-    # ------------
+    # ----------------------------------------------
     def test_double_lamb_oseen_vortex(self):
         """
         Test identification algorithm with the double Lamb Oseen
@@ -379,3 +381,74 @@ class IdentificationTests(unittest.TestCase):
         swirl.run()
         # Testing
         self.assertEqual(len(swirl.vortices), n_vortices_true)
+
+    # ----------------------------------------------
+    def test_multiple_vortices(self):
+        """
+        Test the identification on multiple swirls
+        """
+        # Load velocity fields
+        vx = np.load('../data/multiple_vortices/vx.npy')
+        vy = np.load('../data/multiple_vortices/vy.npy')
+        dx = 1.0/200.
+        # Expected results
+        n_vortices_true = 9
+        # SWIRL instance
+        swirl = SWIRL(v=[vx, vy],
+                      dl=[dx, dx],
+                      l=[1],
+                      S_param=[0., 1., 1.],
+                      crit='rortex',
+                      dc_coeff=5*dx,
+                      dc_adaptive=False,
+                      fast_clustering=True,
+                      xi_option=2,
+                      clust_selector='gamma',
+                      clust_options=[0.9, 0.9, 1.01],
+                      noise_f=1.5,
+                      kink_f=.5,
+                      verbose=False
+                      )
+        # Run algorithm
+        swirl.run()
+        # Testing
+        self.assertEqual(len(swirl.vortices), n_vortices_true)
+
+# ----------------------------------------------
+
+
+class EVCMapTests(unittest.TestCase):
+    """
+    Test cases to check the correctness of the EVC map in the SWIRL algorithm.
+    """
+    @staticmethod
+    def test_rotational_vortex():
+        """
+        Test the EVC map resulting from a simple rotational swirl
+        """
+        # Size of grid
+        nx, ny = 10, 10
+        # Grid
+        xgrid, ygrid = np.meshgrid(np.arange(nx+1), np.arange(ny+1))
+        xgrid[...] = xgrid[...].T - 5.0
+        ygrid[...] = ygrid[...].T - 5.0
+        # Velocity field
+        alpha = 5.0
+        vx = -alpha*ygrid
+        vy = alpha*xgrid
+        # Expected results
+        evc_map_true = np.array([[5.], [5.], [81.]])
+        # SWIRL instance
+        swirl = SWIRL(v=[vx, vy],
+                      dl=[1.0, 1.0],
+                      verbose=False
+                      )
+        # Testing
+        swirl.run()
+        np.testing.assert_array_equal(swirl.M, evc_map_true)
+
+
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    """ execute all tests in module """
+    unittest.main()
