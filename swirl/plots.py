@@ -103,7 +103,7 @@ def plot_decision(swirl, save=None):
   fig.tight_layout(h_pad=0.5)
 
   if save:
-    plt.savefig(save+'.png', dpi=200, bbox_inches = 'tight', pad_inches = 0.01, )
+    plt.savefig(save+'.png', dpi=200, bbox_inches = 'tight', pad_inches = 0.01)
   plt.draw()
   fig.show()
 ##
@@ -201,8 +201,8 @@ def plot_vortices(swirl, l=6, save=None):
 # 
   N = swirl.v.x.shape[0]
   
-  xrange = np.arange(0,N+1)
-  yrange = np.arange(0,N+1)
+  xrange = np.arange(0,N)
+  yrange = np.arange(0,N)
   xgrid, ygrid = np.meshgrid(xrange,yrange)
   xgrid[...] = xgrid[...].T
   ygrid[...] = ygrid[...].T
