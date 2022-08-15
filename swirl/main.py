@@ -586,9 +586,6 @@ class SWIRL:
       print('--- Starting identification ')
       print('---------------------------------------------------------')
       print('---')
-    else:
-      print('--- SWIRL code ')
-      print('--- Starting identification ')
 
     # Timing
     t_start = time.process_time()
@@ -623,9 +620,3 @@ class SWIRL:
         print ("{:<6} {:<10} {:<3} {:<10}".format( '---   ', t, ': ', self.timings[t]))
       print('---------------------------------------------------------')
       print('\n')
-    else: 
-      print('--- Identification completed ')
-      t = 'Total'
-      print ("{:<6} {:<10} {:<3} {:<10}".format( '---   ', t, ': ', self.timings[t]))
-  ##
-  ##
