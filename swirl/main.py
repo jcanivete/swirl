@@ -20,7 +20,7 @@
 import time
 from typing import List
 import numpy as np
-from .utilities import timings, vector2D #, prepare_dataframe
+from .utils import timings, vector2D #, prepare_dataframe
 from .vorticity import compute_vorticity
 from .swirlingstrength import compute_swirlingstrength
 from .rortex import compute_rortex

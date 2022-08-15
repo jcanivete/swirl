@@ -17,10 +17,9 @@
 #
 ## Imports
 #
-import numpy as np
-import pandas as pd
-from .utilities import vector2D
 import warnings
+import numpy as np
+from .utils import vector2D
 #
 #
 #######################################################

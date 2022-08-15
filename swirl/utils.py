@@ -1,6 +1,6 @@
 #######################################################
 ###
-###             utilities.py
+###             utils.py
 ###
 #######################################################
 ##
@@ -10,7 +10,7 @@
 #########################
 ##
 ##
-##  This code contain some utilities such as the 
+##  This code contain some utils such as the 
 ##  definition of the vector2D class, timings, ...
 ##
 #########################
@@ -19,7 +19,6 @@
 #
 import time
 import math
-import pandas as pd
 import numpy as np
 #
 #
@@ -73,7 +72,7 @@ class vector2D:
       self.x = vx
       self.y = vy
     else:
-      raise ValueError('utilities: wrong initialization of vector2D')
+      raise ValueError('utils: wrong initialization of vector2D')
 
     self.norm = np.sqrt(self.x**2 + self.y**2)/np.sqrt(2)
 ##

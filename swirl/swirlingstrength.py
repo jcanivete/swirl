@@ -18,7 +18,7 @@
 ## Imports
 #
 import numpy as np
-from .utilities import create_U
+from .utils import create_U
 
 np.seterr(invalid='ignore')
 #

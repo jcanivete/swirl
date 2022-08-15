@@ -20,7 +20,7 @@
 import numpy as np
 from .vorticity import compute_vorticity
 from .swirlingstrength import compute_swirlingstrength
-from .utilities import create_U
+from .utils import create_U
 #
 #
 #######################################################
