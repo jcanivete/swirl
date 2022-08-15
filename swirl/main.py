@@ -327,7 +327,7 @@ class SWIRL:
   ###############
     
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     # Call external function
     self.W, self.U = compute_vorticity(self.v, 
@@ -355,7 +355,7 @@ class SWIRL:
   ###############
     
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     # Call external function
     self.S, self.U = compute_swirlingstrength(self.v, 
@@ -384,7 +384,7 @@ class SWIRL:
   ###############
     
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     # Call external function
     self.R, self.S, self.U, self.W = compute_rortex(self.S, 
@@ -448,7 +448,7 @@ class SWIRL:
       print('--- Computing EVC map')
         
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     X = 0
     if self.crit == 'vorticity':
@@ -493,7 +493,7 @@ class SWIRL:
       print('--- Clustering')
 
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     # Checking that EVC map has been computed 
     if isinstance(self.M[0], float):
@@ -540,7 +540,7 @@ class SWIRL:
       print('--- Detecting vortices')
 
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     # Sanity check
     if self.cluster_id is None:
@@ -591,7 +591,7 @@ class SWIRL:
       print('--- Starting identification ')
 
     # Timing
-    t_start = time.clock()
+    t_start = time.process_time()
 
     # Compute the mathematical criterion
     self.compute_criterion()

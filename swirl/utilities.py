@@ -99,7 +99,7 @@ def timings(ti):
 #
 ###############################################
   # final time
-  tf = time.clock()
+  tf = time.process_time()
   # total time
   ts = tf-ti
   # if extra units needed
