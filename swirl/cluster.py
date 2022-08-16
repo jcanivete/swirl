@@ -258,7 +258,7 @@ def compute_dc(d, dc_coeff, dc_adaptive, dl):
             dc = np.mean(dord[:, nc])
     else:
         # Simply transform dc_coeff to code units (number of cells)
-        dc = dc_coeff/dl.norm
+        dc = dc_coeff/(0.5*(dl.x+dl.y))
 
     return dc
 # -----------
