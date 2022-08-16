@@ -1,140 +1,131 @@
-#######################################################
-###
-###             swirlingstrength.py
-###
-#######################################################
-##
-##  J. R. Canivete Cuissa
-##  10.02.2021
-##
-#########################
-##
-##
-##  This code contains the routines needed to compute
-##  the swirlingstrength criterion
-##
-#########################
-#
-## Imports
-#
+"""
+SWIRL Code
+    swirlingstrength.py
+
+José Roberto Canivete Cuissa
+IRSOL, 10.02.2021
+
+----------------
+
+This code contains the routines needed to compute the
+swirling strength criterion.
+"""
+# Imports
 import numpy as np
 from .utils import create_U
+# -------------------------
 
-np.seterr(invalid='ignore')
-#
-#
-#######################################################
-##
-##
+
 def compute_swirlingstrength(v, dl, l, param):
-#
-#********************
-# Computes swirling strength arrays with l stencils
-#******************** 
-# 
-##  INPUTS
-#    
-#    - v : 2D vector
-#       - velocity field
-#    - dl : 2D vector
-#       - grid spacing
-#    - l : list of int
-#       - list of stencils to use
-#    - param : list of float
-#       - list with the enhanced swirling strength
-#         parameters [eps, delta, kappa]
-##  OUTPUTS
-#
-#     - S : list of arrays
-#       - Swirling strength arrays
-#     - U : list of arrays
-#       - Velocity gradient tensor arrays
-#
-###############
+    """
+    Computes the swirling strength criterion.
 
-  # Prepare the S,U instances
-  S = []
-  U = []
-  nx = v.x.shape[0]
-  ny = v.x.shape[1]
+    Parameters
+    ----------
+    v : arrays
+        The velocity field [vx, vy].
+    dl : list
+        Grid cells sizes [dx, dy].
+    l : list
+        Stencil sizes.
+    param : list
+        List of swirling strength parameters.
 
-  # Prepare param
-  eps = param[0]
-  delta = param[1]
-  kappa = param[2]
-  
-  # loop over stencils
-  for il in l:
-    # create instances of Ui, Si
-    Si = np.zeros((nx,ny))
-    Ui = np.zeros((nx,ny))
+    Returns
+    -------
+    S : list of arrays
+        List of swirling strength arrays
+    U : list of arrays
+        List of velocity gradient tensor arrays
 
-    # fill velocity gradient tensor:
-    Ui = create_U(v,dl,il) 
+    Raises
+    ------
+    """
+    # To avoid annoying numpy warnings.
+    np.seterr(invalid='ignore')
+    # Prepare the S,U instances
+    S = []
+    U = []
+    nx = v.x.shape[0]
+    ny = v.x.shape[1]
 
-    # Compute eigen vectors and eigenvalues
-    # wi -> eigenvalues
-    # vi -> eigevectors
-    wi,vi = np.linalg.eig(Ui)
+    # Prepare param
+    eps = param[0]
+    delta = param[1]
+    kappa = param[2]
 
-    # index:  
-    # 0 -> im(wi) < 0
-    # 1 -> im(wi) > 1
-    w_index = np.argsort(np.imag(wi))
+    # loop over stencils
+    for il in l:
+        # create instances of Ui, Si
+        Si = np.zeros((nx, ny))
+        Ui = np.zeros((nx, ny))
 
-    i,j = np.meshgrid(  np.arange(np.shape(vi)[0]),
-                        np.arange(np.shape(vi)[1]),
-                        indexing = 'ij'
-                      )
+        # fill velocity gradient tensor:
+        Ui = create_U(v, dl, il)
 
-    # Reorder eigenvectors to form P matrix
-    # P = [u+, u-]
-    P = 0*vi*1j
+        # Compute eigen vectors and eigenvalues
+        # wi -> eigenvalues
+        # vi -> eigevectors
+        wi, vi = np.linalg.eig(Ui)
 
-    # u+
-    P[:,:,0,0] = vi[i,j,0,w_index[i,j,1]]
-    P[:,:,1,0] = vi[i,j,1,w_index[i,j,1]]
-    # u-
-    P[:,:,0,1] = vi[i,j,0,w_index[i,j,0]]
-    P[:,:,1,1] = vi[i,j,1,w_index[i,j,0]]
+        # index:
+        # 0 -> im(wi) < 0
+        # 1 -> im(wi) > 1
+        w_index = np.argsort(np.imag(wi))
 
-    # Determinant of P needed to determine orientation
-    # of the swirl (see Canivete&Steiner,2020)
-    detP = np.linalg.det(P)
-    detP = np.sign(np.imag(detP))
+        i, j = np.meshgrid(np.arange(np.shape(vi)[0]),
+                           np.arange(np.shape(vi)[1]),
+                           indexing='ij'
+                           )
 
-    # imaginary and real components of the eigenvalues
-    # lci (lambda_ci) -> imaginary part (lci > 0)
-    # lcr (lambda_ci) -> real part
-    lci = np.imag(wi[i,j,w_index[i,j,1]])
-    lcr = np.real(wi[i,j,w_index[i,j,1]])
+        # Reorder eigenvectors to form P matrix
+        # P = [u+, u-]
+        P = 0*vi*1j
 
-    # Enhanced swirling strength criteria:
-    ## eps
-    if eps != 0.0:
-      lci = np.where((2.*np.abs(lci) <= eps), lci, 0.0)
+        # u+
+        P[:, :, 0, 0] = vi[i, j, 0, w_index[i, j, 1]]
+        P[:, :, 1, 0] = vi[i, j, 1, w_index[i, j, 1]]
+        # u-
+        P[:, :, 0, 1] = vi[i, j, 0, w_index[i, j, 0]]
+        P[:, :, 1, 1] = vi[i, j, 1, w_index[i, j, 0]]
 
-    ## delta
-    if delta != 0:
-      with np.errstate(divide='ignore'):
-        crit = np.where(np.abs(lci)==0.0, 0.0, lcr/np.abs(lci))
-        lci = np.where(crit >= delta, 0.0, lci)
+        # Determinant of P needed to determine orientation
+        # of the swirl (see Canivete&Steiner,2020)
+        detP = np.linalg.det(P)
+        detP = np.sign(np.imag(detP))
 
-    ## kappa
-    if kappa != 0.:
-      with np.errstate(divide='ignore'):
-        crit = np.where(np.abs(lci)==0.0, 0.0, lcr/np.abs(lci))
-        lci = np.where(crit < -(kappa), 0.0, lci)
+        # imaginary and real components of the eigenvalues
+        # lci (lambda_ci) -> imaginary part (lci > 0)
+        # lcr (lambda_ci) -> real part
+        lci = np.imag(wi[i, j, w_index[i, j, 1]])
+        lcr = np.real(wi[i, j, w_index[i, j, 1]])
 
-    # Swirling strength = 2*[sign(Im[det(P)])]*lambda_ci
-    Si = 2.*detP*lci
+        # Enhanced swirling strength criteria:
+        # eps
+        if eps != 0.0:
+            lci = np.where((2.*np.abs(lci) <= eps), lci, 0.0)
 
-    # Clean velocity gradient tensors 
-    mask = (Si==0.0)
-    Ui[mask] = np.array([[1.,0.],[0.,1.]])
-    
-    # Append Si, Ui
-    S.append(Si)
-    U.append(Ui)
+        # delta
+        if delta != 0:
+            with np.errstate(divide='ignore'):
+                crit = np.where(np.abs(lci) == 0.0, 0.0, lcr/np.abs(lci))
+                lci = np.where(crit >= delta, 0.0, lci)
 
-  return S, U
+        # kappa
+        if kappa != 0.:
+            with np.errstate(divide='ignore'):
+                crit = np.where(np.abs(lci) == 0.0, 0.0, lcr/np.abs(lci))
+                lci = np.where(crit < -(kappa), 0.0, lci)
+
+        # Swirling strength = 2*[sign(Im[det(P)])]*lambda_ci
+        Si = 2.*detP*lci
+
+        # Clean velocity gradient tensors
+        mask = (Si == 0.0)
+        Ui[mask] = np.array([[1., 0.], [0., 1.]])
+
+        # Append Si, Ui
+        S.append(Si)
+        U.append(Ui)
+
+    return S, U

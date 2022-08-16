@@ -7,13 +7,13 @@ IRSOL, 10.02.2021
 
 ----------------
 
-This code contains the main structure of the SWIRL code, 
+This code contains the main structure of the SWIRL code,
 that is the SWIRL class.
 """
 # Imports
 import time
 import numpy as np
-from .utils import timings, vector2D #, prepare_dataframe
+from .utils import timings, vector2D  # , prepare_dataframe
 from .vorticity import compute_vorticity
 from .swirlingstrength import compute_swirlingstrength
 from .rortex import compute_rortex
@@ -43,7 +43,7 @@ class SWIRL:
         [eps, delta, kappa]
     crit: string
         Which mathematical criterion to use in the identification
-        process. 
+        process.
     dc_coeff : float
         If dc_adaptive=True: percentual coefficient used to compute the
         critical distance. The critical distance is defined as the
@@ -96,7 +96,7 @@ class SWIRL:
     noise : arrays
         List of all grid cells that are classified as noise
     vortices : list
-        List with all the identified Vortex objects. 
+        List with all the identified Vortex objects.
 
     Methods
     -------
@@ -116,25 +116,25 @@ class SWIRL:
     clustering(self)
         Performs the clustering with the adapted CFSFDP algorithm.
     detect_vortics(self)
-        Based on the clustering output, creates a collection of 
+        Based on the clustering output, creates a collection of
         Vortex objects which contains the final result of the identification.
     run(self)
         Runs the whole identification process based on the parameters
         given as input.
     """
 
-    def __init__(self, 
-                 v: list, 
-                 dl: list, 
-                 l: list=[1], 
-                 S_param: list=[0.,0.,0.], 
-                 crit: str='rortex', 
-                 dc_coeff: float=3.,
-                 dc_adaptive: bool=True, 
-                 fast_clustering: bool=True, 
-                 xi_option: int=2, 
-                 clust_selector: str='delta-rho', 
-                 clust_options: list=[1.0,0.5,2.0], 
+    def __init__(self,
+                 v: list,
+                 dl: list,
+                 l: list = [1],
+                 S_param: list = [0., 0., 0.],
+                 crit: str = 'rortex',
+                 dc_coeff: float = 3.,
+                 dc_adaptive: bool = True,
+                 fast_clustering: bool = True,
+                 xi_option: int = 2,
+                 clust_selector: str = 'delta-rho',
+                 clust_options: list = [1.0, 0.5, 2.0],
                  noise_f: float = 1.0,
                  kink_f: float = 1.0,
                  verbose: bool = True
@@ -154,7 +154,7 @@ class SWIRL:
             List of parameters for enhanced swirling strength.
         crit: string
             Which mathematical criterion to use in the identification
-            process. 
+            process.
         dc_coeff : float
             If dc_adaptive=True: percentual coefficient used to compute the
             critical distance. The critical distance is defined as the
@@ -186,46 +186,46 @@ class SWIRL:
 
         Returns
         -------
-        M : list of arrays
-            G-EVC maps.
-        dataCells : list of arrays
-            array containing original coordinates, EVC coordinates,
-            and criteria values.
 
         Raises
         ------
         """
-        ## Safe Initialization of velocity arrays and parameters 
+        # Safe Initialization of velocity arrays and parameters
         #
         # Initialize v
-        if len(v)==2 and isinstance(v[0], np.ndarray) and isinstance(v[1], np.ndarray):
-            self.v = vector2D(v[0],v[1])
+        if len(v) == 2 and isinstance(v[0], np.ndarray) and isinstance(v[1], np.ndarray):
+            self.v = vector2D(v[0], v[1])
         else:
-            raise ValueError('Initialization: velocity field is not a list of numpy arrays [vx,vy].')
+            raise ValueError(
+                'Initialization: velocity field is not a list of numpy arrays [vx,vy].')
 
         # Initialize dl
-        if len(dl)==2 and isinstance(dl[0], float) and isinstance(dl[1], float):
-            self.dl = vector2D(dl[0],dl[1])
+        if len(dl) == 2 and isinstance(dl[0], float) and isinstance(dl[1], float):
+            self.dl = vector2D(dl[0], dl[1])
         else:
-            raise ValueError('Initialization: grid spacing is not a list of float [dx,dy].') 
+            raise ValueError(
+                'Initialization: grid spacing is not a list of float [dx,dy].')
 
         # Initialize l
-        if isinstance(l,list): 
+        if isinstance(l, list):
             self.l = l
         else:
-            raise ValueError('Initialization: stencil list is not a list of int [l1,l2,...].') 
+            raise ValueError(
+                'Initialization: stencil list is not a list of int [l1,l2,...].')
 
         # Initialize S_param
-        if (len(S_param)==3 and isinstance(S_param[0], float) 
-                            and isinstance(S_param[1], float) 
-                            and isinstance(S_param[2], float)
-                            ):
+        if (len(S_param) == 3 and
+            isinstance(S_param[0], float) and
+            isinstance(S_param[1], float) and
+            isinstance(S_param[2], float)
+            ):
             self.S_param = S_param
         else:
-            raise ValueError('Initialization: Swirling strength param. is not a list of float [eps, kappa, delta].') 
-        
+            raise ValueError(
+                'Initialization: Swirling strength param. is not a list of float [eps, kappa, delta].')
+
         # Initialize crit
-        if crit in ['rortex','swirling strength','vorticity']:
+        if crit in ['rortex', 'swirling strength', 'vorticity']:
             self.crit = crit
         else:
             raise ValueError('Initialization: Criterium parameter unknown')
@@ -242,14 +242,14 @@ class SWIRL:
         else:
             raise ValueError('Initialization: dc_adaptive must be bool')
 
-        # Initialize fast_clustering 
+        # Initialize fast_clustering
         if isinstance(fast_clustering, bool):
             self.fast_clustering = fast_clustering
         else:
             raise ValueError('Initialization: fast_clustering must be a bool')
 
         # Initialize crit
-        if xi_option in [1,2]:
+        if xi_option in [1, 2]:
             self.xi_option = xi_option
         else:
             raise ValueError('Initialization: xi_option parameter unknown')
@@ -258,13 +258,15 @@ class SWIRL:
         if clust_selector in ['delta-rho', 'gamma']:
             self.clust_selector = clust_selector
         else:
-            raise ValueError('Initialization: clust_selector parameter unknown')
+            raise ValueError(
+                'Initialization: clust_selector parameter unknown')
 
         # Initialize clust_options
         if isinstance(clust_options, list):
             self.clust_options = clust_options
         else:
-            raise ValueError('Initialization: clust_options must be a list of parameters')
+            raise ValueError(
+                'Initialization: clust_options must be a list of parameters')
 
         # Initialize noise_f
         if isinstance(noise_f, float):
@@ -293,16 +295,16 @@ class SWIRL:
         self.dataCells = [0.0]
         self.timings = dict()
         self.cluster_id = None
-        
+
         # Print verbose
         if self.verbose:
             print('---------------------------------------------------------')
             print('---                                                   ---')
             print('---    _/_/_/  _/          _/  _/   _/_/_/    _/      ---')
-            print('---  _/         _/        _/   _/   _/    _/  _/      ---') 
-            print('---    _/_/      _/      _/    _/   _/_/_/    _/      ---') 
-            print('---        _/     _/ _/ _/     _/   _/  _/    _/      ---') 
-            print('---  _/_/_/        _/  _/      _/   _/   _/   _/_/_/  ---') 
+            print('---  _/         _/        _/   _/   _/    _/  _/      ---')
+            print('---    _/_/      _/      _/    _/   _/_/_/    _/      ---')
+            print('---        _/     _/ _/ _/     _/   _/  _/    _/      ---')
+            print('---  _/_/_/        _/  _/      _/   _/   _/   _/_/_/  ---')
             print('---                                                   ---')
             print('---------------------------------------------------------')
             print('---------------------------------------------------------')
@@ -316,18 +318,18 @@ class SWIRL:
             print('---')
             print('--- Parameters:')
             print('---------------')
-            print('---    dl               :',self.dl.x,', ',self.dl.y)
-            print('---    l                :',self.l)
-            print('---    S_param          :',self.S_param)
-            print('---    crit             :',self.crit)
-            print('---    dc_coeff         :',self.dc_coeff)
-            print('---    dc_adaptive      :',self.dc_adaptive)
-            print('---    fast_clustering  :',self.fast_clustering)
-            print('---    xi_option        :',self.xi_option)
-            print('---    clust_selector   :',self.clust_selector)
-            print('---    clust_options    :',self.clust_options)
-            print('---    noise_f          :',self.noise_f)
-            print('---    kink_f           :',self.kink_f)
+            print('---    dl               :', self.dl.x, ', ', self.dl.y)
+            print('---    l                :', self.l)
+            print('---    S_param          :', self.S_param)
+            print('---    crit             :', self.crit)
+            print('---    dc_coeff         :', self.dc_coeff)
+            print('---    dc_adaptive      :', self.dc_adaptive)
+            print('---    fast_clustering  :', self.fast_clustering)
+            print('---    xi_option        :', self.xi_option)
+            print('---    clust_selector   :', self.clust_selector)
+            print('---    clust_options    :', self.clust_options)
+            print('---    noise_f          :', self.noise_f)
+            print('---    kink_f           :', self.kink_f)
             print('---')
             print('---------------------------------------------------------')
     # ------------------------------------------------------------------------
@@ -335,7 +337,7 @@ class SWIRL:
     def vorticity(self):
         """
         It computes the vorticity for every cell in the 2D grid and saves it
-        as an attribute 
+        as an attribute.
 
         Parameters
         ----------
@@ -346,13 +348,13 @@ class SWIRL:
         Raises
         ------
         """
-        
+
         # Timing
         t_start = time.process_time()
 
         # Call external function
-        self.W, self.U = compute_vorticity(self.v, 
-                                           self.dl, 
+        self.W, self.U = compute_vorticity(self.v,
+                                           self.dl,
                                            self.l
                                            )
 
@@ -375,22 +377,21 @@ class SWIRL:
         Raises
         ------
         """
-    
+
         # Timing
         t_start = time.process_time()
 
         # Call external function
-        self.S, self.U = compute_swirlingstrength(self.v, 
-                                                self.dl, 
-                                                self.l, 
-                                                self.S_param
-                                                )
+        self.S, self.U = compute_swirlingstrength(self.v,
+                                                  self.dl,
+                                                  self.l,
+                                                  self.S_param
+                                                  )
 
         # Timing
         t_total = timings(t_start)
         self.timings['Swirling strength'] = t_total
     # ---------------------------------------------
-
 
     def rortex(self):
         """
@@ -405,16 +406,16 @@ class SWIRL:
 
         Raises
         ------
-        """  
+        """
         # Timing
         t_start = time.process_time()
 
         # Call external function
-        self.R, self.S, self.U, self.W = compute_rortex(self.S, 
-                                                        self.W, 
-                                                        self.v, 
-                                                        self.dl, 
-                                                        self.l, 
+        self.R, self.S, self.U, self.W = compute_rortex(self.S,
+                                                        self.W,
+                                                        self.v,
+                                                        self.dl,
+                                                        self.l,
                                                         self.S_param
                                                         )
 
@@ -423,11 +424,10 @@ class SWIRL:
         self.timings['Rortex'] = t_total
     # ----------------------------------
 
-
     def compute_criterion(self):
         """
         It computes the the choosen criterion for every cell in the
-        2D grid and saves it as an attribute. 
+        2D grid and saves it as an attribute.
 
         Parameters
         ----------
@@ -440,16 +440,16 @@ class SWIRL:
         """
         if self.verbose:
             print('--- Computing criterion')
-        
+
         # Compute the criterion chosen
         if self.crit == 'vorticity':
-            if isinstance(self.W[0],float):
+            if isinstance(self.W[0], float):
                 self.vorticity()
         elif self.crit == 'swirling strength':
-            if isinstance(self.S[0],float):
+            if isinstance(self.S[0], float):
                 self.swirlingstrength()
         elif self.crit == 'rortex':
-            if isinstance(self.R[0],float):
+            if isinstance(self.R[0], float):
                 self.rortex()
     # -----------------------
 
@@ -469,7 +469,7 @@ class SWIRL:
         # Print status
         if self.verbose:
             print('--- Computing EVC map')
-            
+
         # Timing
         t_start = time.process_time()
 
@@ -480,7 +480,7 @@ class SWIRL:
             X = self.S
         elif self.crit == 'rortex':
             X = self.R
-    
+
         # Sanity check
         if isinstance(X[0], float):
             raise ValueError('evcmap: Criteria has not been computed.')
@@ -518,7 +518,7 @@ class SWIRL:
         # Timing
         t_start = time.process_time()
 
-        # Checking that EVC map has been computed 
+        # Checking that EVC map has been computed
         if isinstance(self.M[0], float):
             raise ValueError('Clustering: EVC map has not been computed.')
 
@@ -526,24 +526,23 @@ class SWIRL:
         self.data = prepare_data(self.M, self.dataCells, self.fast_clustering)
 
         # Call clustering algorithm
-        self.cluster_id, self.peaks_ind, self.rho, self.delta, self.dc, self.d = findcluster2D(self.data, 
-                                                                                               self.dc_coeff, 
+        self.cluster_id, self.peaks_ind, self.rho, self.delta, self.dc, self.d = findcluster2D(self.data,
+                                                                                               self.dc_coeff,
                                                                                                self.dc_adaptive,
                                                                                                self.dl,
-                                                                                               self.fast_clustering, 
-                                                                                               self.xi_option, 
-                                                                                               self.clust_selector, 
+                                                                                               self.fast_clustering,
+                                                                                               self.xi_option,
+                                                                                               self.clust_selector,
                                                                                                self.clust_options
-                                                                                               ) 
-    
-        # Create gamma 
+                                                                                               )
+
+        # Create gamma
         self.gamma = self.rho*self.delta
 
         # Timing
         t_total = timings(t_start)
         self.timings['Clustering'] = t_total
     # --------------------------------------
-
 
     def detect_vortices(self):
         """
@@ -572,15 +571,15 @@ class SWIRL:
 
         # Call detection routine for vortex identification
         if self.cluster_id.size > 0:
-            self.vortices, self.noise = detection(self.dataCells, 
-                                                    self.M, 
-                                                    self.cluster_id, 
-                                                    self.peaks_ind, 
-                                                    self.fast_clustering, 
-                                                    self.noise_f, 
-                                                    self.kink_f, 
-                                                    self.dl
-                                                    )
+            self.vortices, self.noise = detection(self.dataCells,
+                                                  self.M,
+                                                  self.cluster_id,
+                                                  self.peaks_ind,
+                                                  self.fast_clustering,
+                                                  self.noise_f,
+                                                  self.kink_f,
+                                                  self.dl
+                                                  )
         else:
             self.vortices = []
             self.noise = []
@@ -589,7 +588,6 @@ class SWIRL:
         t_total = timings(t_start)
         self.timings['Detection'] = t_total
     # -------------------------------------
-
 
     def run(self):
         """
@@ -643,6 +641,7 @@ class SWIRL:
             print('---')
             print('--- Timings')
             for t in self.timings:
-                print ("{:<6} {:<10} {:<3} {:<10}".format( '---   ', t, ': ', self.timings[t]))
+                print("{:<6} {:<10} {:<3} {:<10}".format(
+                    '---   ', t, ': ', self.timings[t]))
             print('---------------------------------------------------------')
             print('\n')
