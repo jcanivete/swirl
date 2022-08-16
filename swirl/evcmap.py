@@ -60,7 +60,7 @@ def compute_evcmap(X, U, v, dl):
         x, y = np.meshgrid(np.arange(0, nx), np.arange(0, ny), indexing='ij')
 
         # compute estimated radius (in units)
-        r = radius(X[n], v, dl)
+        r = radius(X[n], v)
 
         # compute estimated center direction
         ex, ey = direction(U[n], v, dl)
