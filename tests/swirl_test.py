@@ -451,5 +451,4 @@ class EVCMapTests(unittest.TestCase):
 
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    """ execute all tests in module """
     unittest.main()
