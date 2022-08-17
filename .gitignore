@@ -51,6 +51,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 tests/paper_test.py
+tests/paper_data_test/
 
 # Translations
 *.mo
