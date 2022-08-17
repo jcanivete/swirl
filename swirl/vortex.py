@@ -36,8 +36,8 @@ class Vortex:
         vortex detection criteria values for each cell
     stencils : array
         array of stencils used per cell
-    id : int
-        identification number
+    cluster_id : int
+        cluster identification number
     dl : vector of float
         the grid spacing [dx,dy]
 
@@ -81,7 +81,7 @@ class Vortex:
                  ecr,
                  X,
                  stencils,
-                 id,
+                 cluster_id,
                  dl
                  ):
         """
@@ -101,8 +101,8 @@ class Vortex:
             vortex detection criteria values for each cell
         stencils : array
             array of stencils used per cell
-        id : int
-            identification number
+        cluster_id : int
+            cluster identification number
         dl : vector of float
             the grid spacing [dx,dy]
 
@@ -130,8 +130,8 @@ class Vortex:
         # initialize stencils
         self.stencils = stencils
 
-        # initialize id
-        self.id = id
+        # initialize cluster_id
+        self.cluster_id = cluster_id
 
         # initialize dl
         self.dl = dl
@@ -506,7 +506,7 @@ def detection(dataCells,
     for index in peaks_ind:
 
         # Identification number of cluster
-        id = cluster_id[index]
+        idx = cluster_id[index]
 
         # Find coordinates of peaks
         xc = 0
@@ -524,7 +524,7 @@ def detection(dataCells,
         if fast_clustering:
             # If fast_clustering, first find grid-EVCs
             # which belong to the cluster
-            mask_id = np.where(cluster_id == id)[0]
+            mask_id = np.where(cluster_id == idx)[0]
             evc_cluster = M[:2, mask_id]
 
             # Then find all EVC that belong to cluster
@@ -538,7 +538,7 @@ def detection(dataCells,
         else:
             # Else, just use cluster_id to select dataCells
             # belonging to cluster
-            mask_id = np.where(cluster_id == id)[0]
+            mask_id = np.where(cluster_id == idx)[0]
             cluster_data = dataCells[:, mask_id]
 
         # Create the vortex structure
@@ -548,7 +548,7 @@ def detection(dataCells,
                    X=cluster_data[4],
                    ecr=cluster_data[5],
                    stencils=cluster_data[6],
-                   id=id,
+                   cluster_id=idx,
                    dl=dl
                    )
 
