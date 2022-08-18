@@ -12,6 +12,7 @@ that is the SWIRL class.
 """
 # Imports
 import time
+import h5py
 import numpy as np
 from .utils import timings, vector2D  # , prepare_dataframe
 from .vorticity import compute_vorticity
@@ -97,6 +98,14 @@ class SWIRL:
         List of all grid cells that are classified as noise
     vortices : list
         List with all the identified Vortex objects.
+    radii : array
+        List of radii of the identified vortices.
+    centers : array
+        List of the centers of the identified vortices.
+    orientations : array
+        List of the orientations of the identified vortices.
+    n_vortices : int
+        Number of identified vortices
 
     Methods
     -------
@@ -121,6 +130,8 @@ class SWIRL:
     run(self)
         Runs the whole identification process based on the parameters
         given as input.
+    save(self, file_name)
+        It saves the properties of the identified vortices in a h5py file.
     """
 
     def __init__(self,
@@ -584,6 +595,12 @@ class SWIRL:
             self.vortices = []
             self.noise = []
 
+        # Store main quantities
+        self.radii = np.array([v.r for v in self.vortices])
+        self.centers = np.array([v.center for v in self.vortices])
+        self.orientations = np.array([v.orientation for v in self.vortices])
+        self.n_vortices = len(self.vortices)
+
         # Timing
         t_total = timings(t_start)
         self.timings['Detection'] = t_total
@@ -645,3 +662,25 @@ class SWIRL:
                     '---   ', t, ': ', self.timings[t]))
             print('---------------------------------------------------------')
             print('\n')
+        
+    # -------------------------------------
+
+    def save(self, file_name='SWIRL_vortices'):
+        """
+        It saves the properties of the identified vortices in a h5py file.
+
+        Parameters
+        ----------
+        file_name : string
+            The name of the h5py file where the data will be saved.
+
+        Returns
+        -------
+
+        Raises
+        ------
+        """
+        # Create the file
+        hf = h5py.File(file_name+'.h5','w')
+
+        
