@@ -11,6 +11,7 @@ This code contains the main structure of the SWIRL code,
 that is the SWIRL class.
 """
 # Imports
+from dataclasses import dataclass
 import time
 import h5py
 import numpy as np
@@ -297,6 +298,21 @@ class SWIRL:
         else:
             raise ValueError('Initialization: verbose must be a bool')
 
+        # Create dictionary with all the parameters
+        self.params = dict()
+        self.params['dl'] = dl
+        self.params['l']  = l
+        self.params['S_param'] = S_param
+        self.params['crit'] = crit 
+        self.params['dc_coeff'] = dc_coeff
+        self.params['dc_adaptive'] = dc_adaptive 
+        self.params['fast_clustering'] = fast_clustering 
+        self.params['xi_option'] = xi_option 
+        self.params['clust_selector'] = clust_selector 
+        self.params['clust_options'] = clust_options
+        self.params['noise_f'] = noise_f 
+        self.params['kink_f'] = kink_f 
+
         # Initialize other quantities:
         self.S = [0.0]
         self.W = [0.0]
@@ -306,6 +322,10 @@ class SWIRL:
         self.dataCells = [0.0]
         self.timings = dict()
         self.cluster_id = None
+        self.radii = None
+        self.centers = None
+        self.orientations = None
+        self.n_vortices = None
 
         # Print verbose
         if self.verbose:
@@ -680,7 +700,44 @@ class SWIRL:
         Raises
         ------
         """
+        # Check if there are vortices identified
+        if self.n_vortices is None:
+            raise RuntimeError("No vortices have been identified. The file won't be created.")
+
         # Create the file
         hf = h5py.File(file_name+'.h5','w')
+        # Set attributes
+        hf.attrs.__setitem__("n_vortices", self.n_vortices)
+        hf.attrs.__setitem__("radii", self.radii)
+        hf.attrs.__setitem__("centers", self.centers)
+        hf.attrs.__setitem__("orientations", self.orientations)
+        # Create params dataset
+        params_group = hf.create_group('params')
+        params_group.create_dataset('dl', data=np.array([self.dl.x, self.dl.y]))
+        params_group.create_dataset('l', data=self.l)
+        params_group.create_dataset('S_param', data=self.S_param)
+        params_group.create_dataset('crit', data=self.crit) 
+        params_group.create_dataset('dc_coeff', data=self.dc_coeff)
+        params_group.create_dataset('dc_adaptive', data=self.dc_adaptive)
+        params_group.create_dataset('fast_clustering', data=self.fast_clustering)
+        params_group.create_dataset('xi_option', data=self.xi_option)
+        params_group.create_dataset('clust_selector', data=self.clust_selector)
+        params_group.create_dataset('clust_options', data=self.clust_options)
+        params_group.create_dataset('noise_f', data=self.noise_f)
+        params_group.create_dataset('kink_f', data=self.kink_f)
+        # Create vortices datasets
+        hf.create_group('vortices')
+        for n in np.arange(self.n_vortices):
+            vortex_group = hf.create_group('vortices/'+str(n).zfill(5))
+            # Save radius, center, orientation, cells, evc, rortex
+            vortex_group.create_dataset("r", (1,), data=self.vortices[n].r)
+            vortex_group.create_dataset("center", (2,), data=self.vortices[n].center)
+            vortex_group.create_dataset("orientation", (1,), data=self.vortices[n].orientation)
+            vortex_group.create_dataset("cells" , data=self.vortices[n].cells)
+            vortex_group.create_dataset("evc", data=self.vortices[n].evc)
+            vortex_group.create_dataset("rortex", data=self.vortices[n].X)
 
-        
+
+        # Close file
+        hf.close()
+
