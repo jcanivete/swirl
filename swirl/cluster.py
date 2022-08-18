@@ -21,10 +21,10 @@ from scipy import spatial
 # -----------------------
 
 
-def findcluster2D(data,
+def findcluster2D(gevc_map,
                   dc_coeff,
                   dc_adaptive,
-                  dl,
+                  dx_grid,
                   fast_clustering,
                   xi_option,
                   clust_selector,
@@ -38,7 +38,7 @@ def findcluster2D(data,
 
     Parameters
     ----------
-    data : array
+    gevc_map : array
         Coordinates of the (G-)EVC points.
         If fast_clustering is True, a third column with the cardinality
         of each point.
@@ -51,8 +51,8 @@ def findcluster2D(data,
     dc_adaptive : bool
         Option: to use the adaptive critical distance (dc) computed on the
         % of points inside dc (True) or to use a fixed distance defined
-        by dc_coeff*dl.
-    dl : float
+        by dc_coeff*dx_grid.
+    dx_grid : float
         Size of the grid cells to translate the dc_coeff in case of
         dc_adaptive=False to number of cells.
     fast_clustering : bool
@@ -90,13 +90,18 @@ def findcluster2D(data,
     Raises
     ------
     """
-    # check size of data:
-    N = data.shape[0]
+    # check size of gevc_map:
+    N = gevc_map.shape[0]
 
     if N > 1:
         # Compute density array rho
-        rho, d, dc = compute_rho(
-            data, dc_coeff, dc_adaptive, dl, fast_clustering, xi_option)
+        rho, d, dc = compute_rho(gevc_map,
+                                 dc_coeff,
+                                 dc_adaptive,
+                                 dx_grid,
+                                 fast_clustering,
+                                 xi_option
+                                 )
         # Compute delta array
         delta = compute_delta(rho, d)
         if len(rho) > 0:
@@ -104,7 +109,7 @@ def findcluster2D(data,
             clusters, peaks, rho, delta = clustering(d,
                                                      rho,
                                                      delta,
-                                                     data,
+                                                     gevc_map,
                                                      fast_clustering,
                                                      clust_selector,
                                                      clust_options
@@ -125,13 +130,13 @@ def findcluster2D(data,
 # -------------------------------------------
 
 
-def compute_rho(data, dc_coeff, dc_adaptive, dl, fast_clustering, xi_option):
+def compute_rho(gevc_map, dc_coeff, dc_adaptive, dx_grid, fast_clustering, xi_option):
     """
     Computes the density coefficient rho used in the CFSFDP algorithm.
 
     Parameters
     ----------
-    data : array
+    gevc_map : array
         Coordinates of the (G-)EVC points.
         If fast_clustering is True, a third column with the cardinality
         of each point.
@@ -144,8 +149,8 @@ def compute_rho(data, dc_coeff, dc_adaptive, dl, fast_clustering, xi_option):
     dc_adaptive : bool
         Option: to use the adaptive critical distance (dc) computed on the
         % of points inside dc (True) or to use a fixed distance defined
-        by dc_coeff*dl.
-    dl : float
+        by dc_coeff*dx_grid.
+    dx_grid : float
         Size of the grid cells to translate the dc_coeff in case of
         dc_adaptive=False to number of cells.
     fast_clustering : bool
@@ -169,21 +174,21 @@ def compute_rho(data, dc_coeff, dc_adaptive, dl, fast_clustering, xi_option):
     ------
     """
     # compute distance between points:
-    d = spatial.distance.cdist(data[:2, :].T, data[:2, :].T)
+    d = spatial.distance.cdist(gevc_map[:2, :].T, gevc_map[:2, :].T)
     # Adjust critical distance (dc)
-    dc = compute_dc(d, dc_coeff, dc_adaptive, dl)
-    # Divide data in 2: positive and negative cardinality
-    p, = np.where(data[2] > 0.0)
-    n, = np.where(data[2] < 0.0)
+    dc = compute_dc(d, dc_coeff, dc_adaptive, dx_grid)
+    # Divide gevc_map in 2: positive and negative cardinality
+    p, = np.where(gevc_map[2] > 0.0)
+    n, = np.where(gevc_map[2] < 0.0)
     Q = [q for q in [n, p] if q.shape[0] > 0]
 
     # Prepare arrays
     rho = []
     d = []
-    # Do first positive cardinality data and then negative
+    # Do first positive cardinality gevc_map and then negative
     for q in Q:
         # compute distance between points
-        dq = spatial.distance.cdist(data[:2, q].T, data[:2, q].T)
+        dq = spatial.distance.cdist(gevc_map[:2, q].T, gevc_map[:2, q].T)
         # compute Xi matrix
         if xi_option == 1:
             xij = np.where(dq < dc, 1.0, 0.0)
@@ -194,7 +199,7 @@ def compute_rho(data, dc_coeff, dc_adaptive, dl, fast_clustering, xi_option):
 
         # If fast_clustering is true, apply modified formula (see paper):
         if fast_clustering:
-            s = np.abs(data[2, q]).T
+            s = np.abs(gevc_map[2, q]).T
             rhoq = np.einsum('j,ij', s, xij)
         else:
             # rho is the sum of rows - 1 given by distance with itself
@@ -207,7 +212,7 @@ def compute_rho(data, dc_coeff, dc_adaptive, dl, fast_clustering, xi_option):
 # -------------------
 
 
-def compute_dc(d, dc_coeff, dc_adaptive, dl):
+def compute_dc(d, dc_coeff, dc_adaptive, dx_grid):
     """
     Computes the critical distance (dc) used in the kernel for the
     computation of rho. The idea is that only dc_coeff % of all
@@ -227,8 +232,8 @@ def compute_dc(d, dc_coeff, dc_adaptive, dl):
     dc_adaptive : bool
         Option: to use the adaptive critical distance (dc) computed on the
         % of points inside dc (True) or to use a fixed distance defined
-        by dc_coeff*dl.
-    dl : float
+        by dc_coeff*dx_grid.
+    dx_grid : float
         Size of the grid cells to translate the dc_coeff in case of
         dc_adaptive=False to number of cells.
 
@@ -258,7 +263,7 @@ def compute_dc(d, dc_coeff, dc_adaptive, dl):
             dc = np.mean(dord[:, nc])
     else:
         # Simply transform dc_coeff to code units (number of cells)
-        dc = dc_coeff/(0.5*(dl.x+dl.y))
+        dc = dc_coeff/(0.5*(dx_grid.x+dx_grid.y))
 
     return dc
 # -----------
@@ -323,16 +328,16 @@ def compute_delta(rho, d):
 def clustering(d,
                rho,
                delta,
-               data,
+               gevc_map,
                fast_clustering,
                clust_selector,
                clust_options
                ):
     """
-    This routine clusters the data points according to the CFSFDP algorithm.
+    This routine clusters the gevc_map points according to the CFSFDP algorithm.
     If the fast_clustering is activated (True), it takes into account the
     sign of the criterium. It returns an array with the index of the cluster
-    to which each point belongs. If 0 the data point is considered noise.
+    to which each point belongs. If 0 the gevc_map point is considered noise.
     The peak of each cluster is given in the array peaks.
 
     Parameters
@@ -343,7 +348,7 @@ def clustering(d,
         Array with the computed densities for each point.
     delta : array
         Array with the computed deltas for each point.
-    data : array
+    gevc_map : array
         Coordinates of the (G-)EVC points.
         If fast_clustering is True, a third column with the cardinality
         of each point.
@@ -380,14 +385,14 @@ def clustering(d,
         rho_tot = np.array([])
         delta_tot = np.array([])
 
-    # get total number of data points
+    # get total number of points
     N = rho_tot.shape[0]
 
     delta_fc = np.copy(delta_tot)
     rho_fc = np.copy(rho_tot)
     # If fast_clustering, add dummy points to delta and rho
     if fast_clustering:
-        s = np.abs(data[2])
+        s = np.abs(gevc_map[2])
         stot = np.sum(s)
 
         # Prepare delta
@@ -489,18 +494,18 @@ def clustering(d,
 # --------------------------------------------
 
 
-def prepare_data(M, dataCells, fast_clustering):
+def prepare_data(gevc_map, data_cells, fast_clustering):
     """
     This routine arranges the data for the clustering algorithm.
 
     Parameters
     ----------
-    M : list of arrays
+    gevc_map : list of arrays
         arrays containing the G-EVC map
-    dataCells : list of arrays
+    data_cells : list of arrays
         arrays containing all the info about EVCs
     fast_clustering: bool
-        Option to use M instead of dataCells for clustering
+        Option to use M instead of data_cells for clustering
 
     Returns
     -------
@@ -515,11 +520,11 @@ def prepare_data(M, dataCells, fast_clustering):
     # If fast_clustering is True: use M
     if fast_clustering:
         # Achtung! ncols of data = 3!
-        data = M
+        data = gevc_map
 
-    # Else use EVC precise coordinates from dataCells
+    # Else use EVC precise coordinates from data_cells
     else:
         # Achtung! ncols of data = 2!
-        data = dataCells[:2]
+        data = data_cells[:2]
 
     return data
