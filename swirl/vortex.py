@@ -55,6 +55,8 @@ class Vortex:
         Effective radius of the vortex.
     center : list
         Coordinates of center of vortex.
+    orientation : float
+        Orientation of the swirl. +1 means anti-clockwise, -1 clockwise.
 
     Methods
     -------
@@ -126,6 +128,11 @@ class Vortex:
 
         # initialize crit
         self.X = X
+
+        # initialize orientation
+        # + 1 : anti-clockwise
+        # - 1 : clockwise
+        self.orientation = np.sign(np.mean(self.X))
 
         # initialize stencils
         self.stencils = stencils
