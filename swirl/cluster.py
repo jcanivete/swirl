@@ -260,8 +260,8 @@ def compute_dc(d, dc_coeff, dc_adaptive, dx_grid):
             # dc for each row is at nc index, average over them
             dc = np.mean(dord[:, nc])
     else:
-        # Simply transform dc_coeff to code units (number of cells)
-        dc = dc_coeff#/(0.5*(dx_grid.x+dx_grid.y))
+        # The critical distance corresponds to the dc_coeff
+        dc = dc_coeff
 
     return dc
 # -----------
