@@ -57,10 +57,10 @@ def findcluster2D(gevc_map,
         dc_adaptive=False to number of cells.
     fast_clustering : bool
         Option to use the grid adapted version of the clustering algorithm.
-    xi_option : int
+    xi_option : str
         Kernel used to compute densities.
-        Option 1: Heaviside function.
-        Option 2: Gaussian kernel.
+        'Heaviside' : Heaviside function.
+        'Gaussian': Gaussian kernel.
     clust_selector : string
         Cluster centers selection process:
         'delta-rho' or 'gamma'.
@@ -155,10 +155,10 @@ def compute_rho(gevc_map, dc_coeff, dc_adaptive, dx_grid, fast_clustering, xi_op
         dc_adaptive=False to number of cells.
     fast_clustering : bool
         Option to use the grid adapted version of the clustering algorithm.
-    xi_option : int
+    xi_option : str
         Kernel used to compute densities.
-        Option 1: Heaviside function.
-        Option 2: Gaussian kernel.
+        'Heaviside' : Heaviside function.
+        'Gaussian': Gaussian kernel.
 
     Returns
     -------
@@ -190,12 +190,10 @@ def compute_rho(gevc_map, dc_coeff, dc_adaptive, dx_grid, fast_clustering, xi_op
         # compute distance between points
         dq = spatial.distance.cdist(gevc_map[:2, q].T, gevc_map[:2, q].T)
         # compute Xi matrix
-        if xi_option == 1:
+        if xi_option == 'Heaviside':
             xij = np.where(dq < dc, 1.0, 0.0)
-        elif xi_option == 2:
+        elif xi_option == 'Gaussian':
             xij = np.exp(-(dq/dc)**2)
-        else:
-            raise ValueError('computer_rho: Invalid xi_option')
 
         # If fast_clustering is true, apply modified formula (see paper):
         if fast_clustering:

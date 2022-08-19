@@ -49,7 +49,7 @@ class vector2D:
             self.x = vx
             self.y = vy
         else:
-            raise ValueError('utils: wrong initialization of vector2D')
+            raise ValueError('Wrong initialization of vector2D.')
 
         self.norm = np.sqrt(self.x**2 + self.y**2)
     # --------------------------------------------
@@ -177,8 +177,8 @@ def read_params(param_file = ''):
 
     Raises
     ------
-    TypeError
-        If one of the parameters given is not of the correct type 
+    ValueError
+        If parameters do not met the requirements.
     """
     # Set default parameters
     params = dict()
@@ -202,20 +202,31 @@ def read_params(param_file = ''):
     params['cluster_fast']=config.getboolean('Clustering',
                                              'cluster_fast',
                                              fallback=True)
-    params['cluster_kernel']=config.getint('Clustering',
-                                           'cluster_kernel',
-                                           fallback=2)
+    params['cluster_kernel']=config.get('Clustering',
+                                        'cluster_kernel',
+                                        fallback='Gaussian')
     params['cluster_decision']=config.get('Clustering',
                                           'cluster_decision',
                                           fallback='delta-rho')
-    params['cluster_param']=ast.literal_eval(config.get('Clustering',
-                                                        'cluster_param',
-                                                        fallback='[1.0, 0.5, 2.0]'))
-    params['noise_param']=config.getint('Noise',
-                                        'noise_param',
-                                        fallback=1.0)
-    params['kink_param']=config.getint('Noise',
-                                        'kink_param',
-                                        fallback=1.0)
+    params['cluster_params']=ast.literal_eval(config.get('Clustering',
+                                                         'cluster_params',
+                                                         fallback='[1.0, 0.5, 2.0]'))
+    params['noise_param']=config.getfloat('Noise',
+                                           'noise_param',
+                                           fallback=1.0)
+    params['kink_param']=config.getfloat('Noise',
+                                         'kink_param',
+                                         fallback=1.0)
 
+    # Make checks
+    if len(params['stencils']) < 1:
+        raise ValueError("The 'stencils' parameters must have at least one entry.")
+    if len(params['swirlstr_params']) != 3:
+        raise ValueError("The 'swirlistr_params' must have exactly three entries: [eps, delta, kappa].")
+    if len(params['cluster_params']) != 3:
+        raise ValueError("The 'cluster_params' must have exactly three entries: [rho_p, delta_p, gamma_p].")
+    if params['cluster_kernel'] not in ['Gaussian', 'Heaviside']:
+        raise ValueError("The 'cluster_kernel' parameter must be either 'Gaussian' (default) or 'Heaviside'.")
+    if params['cluster_decision'] not in ['delta-rho', 'gamma']:
+        raise ValueError("The 'cluster_decision' parameter must be either 'delta-rho' (default) or 'gamma'.")
     return params
