@@ -14,9 +14,11 @@ in the SWIRL code.
 from email.policy import default
 import time
 import math
+from warnings import WarningMessage
 import numpy as np
 import configparser
 import ast
+import warnings
 # ----------------
 
 
@@ -185,6 +187,10 @@ def read_params(param_file = ''):
     # Read config file
     config = configparser.ConfigParser()
     config.read(param_file)
+    # Sanity check if the file is empty
+    if len(config.sections())==0:
+        warnings.warn('\nThe parameter file is empty or it does not exist. The default values will be used.',
+                      RuntimeWarning)
     # Read params and use the default ones in case they 
     # are not specified
     params['stencils']=ast.literal_eval(config.get('Criterion',
