@@ -1,0 +1,29 @@
+# SWIRL parameters file with default values
+# The parameter file must have this structure:
+#
+#       [Criterion]
+#        ...
+#       [Clustering]
+#        ...
+#       [Noise]
+#        ...
+#
+# The various parameters can be omitted. In that case,
+# the default values (the ones showed here) will be used 
+# by the SWIRL code.
+
+[Criterion]
+stencils : [1]
+swirlstr_params : [0., 0., 0.]
+
+[Clustering]
+dc_param : 3.
+dc_adaptive : True
+cluster_fast : True
+cluster_kernel : Gaussian
+cluster_decision : gamma
+cluster_params : [1.0, 0.5, 15.0]
+
+[Noise]
+noise_param : 1.5
+kink_param : 1.0
