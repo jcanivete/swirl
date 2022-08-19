@@ -1,0 +1,8 @@
+# SWIRL parameters file for the Lamb Oseen vortex test
+
+[Clustering]
+cluster_decision : gamma
+cluster_params : [1.0,0.5,15.0]
+
+[Noise]
+noise_param : 1.5

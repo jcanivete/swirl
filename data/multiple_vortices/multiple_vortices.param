@@ -1,0 +1,14 @@
+# SWIRL parameters file for the multiple vortices test
+
+[Criterion]
+swirlstr_params : [0., 1., 1.]
+
+[Clustering]
+dc_param : 5.
+dc_adaptive : False
+cluster_decision : gamma
+cluster_params : [0.9, 0.9, 1.01]
+
+[Noise]
+noise_param : 1.5
+kink_param : 0.5

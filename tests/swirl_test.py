@@ -37,7 +37,7 @@ class CriteriaTests(unittest.TestCase):
         rort_true = np.zeros((nx, ny))
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Computing quantities
@@ -68,7 +68,7 @@ class CriteriaTests(unittest.TestCase):
         rort_true = np.zeros((nx, ny))
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Computing quantities
@@ -104,7 +104,7 @@ class CriteriaTests(unittest.TestCase):
         rort_true = np.zeros((nx, ny))
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Computing quantities
@@ -143,7 +143,7 @@ class CriteriaTests(unittest.TestCase):
         rort_true = vort_true
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Computing quantities
@@ -194,7 +194,7 @@ class CriteriaTests(unittest.TestCase):
         rort_true = true_arrays[2]
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[dx, dy],
+                      grid_dx=[dx, dy],
                       verbose=False
                       )
         # Computing quantities
@@ -227,7 +227,7 @@ class IdentificationTests(unittest.TestCase):
         n_vortices_true = 0
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Run algorithm
@@ -250,7 +250,7 @@ class IdentificationTests(unittest.TestCase):
         n_vortices_true = 0
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Run algorithm
@@ -277,7 +277,7 @@ class IdentificationTests(unittest.TestCase):
         n_vortices_true = 0
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Run algorithm
@@ -307,7 +307,7 @@ class IdentificationTests(unittest.TestCase):
         n_vortices_true = 1
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Run algorithm
@@ -348,7 +348,7 @@ class IdentificationTests(unittest.TestCase):
         n_vortices_true = 1
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[dx, dy],
+                      grid_dx=[dx, dy],
                       verbose=False
                       )
         # Run algorithm
@@ -366,16 +366,15 @@ class IdentificationTests(unittest.TestCase):
         vy =  x*rmax*vmax/(r^2*(1 + 0.5/alpha))*(1 - exp(-alpha*r^2/rmax^2))
         """
         # Load velocity fields
-        vx = np.load('../data/lamb_oseen/vx.npy')
-        vy = np.load('../data/lamb_oseen/vy.npy')
+        data_dir = '../data/lamb_oseen/'
+        vx = np.load(data_dir+'vx.npy')
+        vy = np.load(data_dir+'vy.npy')
         # Expected results
         n_vortices_true = 2
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
-                      clust_selector='gamma',
-                      clust_options=[1.0, 0.5, 15.0],
-                      noise_f=1.5,
+                      grid_dx = [1.0, 1.0],
+                      param_file=data_dir+'lamb_oseen.param',
                       verbose=False
                       )
         # Run algorithm
@@ -389,25 +388,16 @@ class IdentificationTests(unittest.TestCase):
         Test the identification on multiple swirls
         """
         # Load velocity fields
-        vx = np.load('../data/multiple_vortices/vx.npy')
-        vy = np.load('../data/multiple_vortices/vy.npy')
+        data_dir = '../data/multiple_vortices/'
+        vx = np.load(data_dir+'vx.npy')
+        vy = np.load(data_dir+'vy.npy')
         dx = 1.0/200.
         # Expected results
         n_vortices_true = 9
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[dx, dx],
-                      l=[1],
-                      S_param=[0., 1., 1.],
-                      crit='rortex',
-                      dc_coeff=5*dx,
-                      dc_adaptive=False,
-                      fast_clustering=True,
-                      xi_option=2,
-                      clust_selector='gamma',
-                      clust_options=[0.9, 0.9, 1.01],
-                      noise_f=1.5,
-                      kink_f=.5,
+                      grid_dx=[dx, dx],
+                      param_file=data_dir+'multiple_vortices.param',
                       verbose=False
                       )
         # Run algorithm
@@ -441,7 +431,7 @@ class EVCMapTests(unittest.TestCase):
         evc_map_true = np.array([[5.], [5.], [81.]])
         # SWIRL instance
         swirl = SWIRL(v=[vx, vy],
-                      dl=[1.0, 1.0],
+                      grid_dx = [1.0, 1.0],
                       verbose=False
                       )
         # Testing
