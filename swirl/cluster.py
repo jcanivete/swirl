@@ -261,7 +261,7 @@ def compute_dc(d, dc_coeff, dc_adaptive, dx_grid):
             dc = np.mean(dord[:, nc])
     else:
         # Simply transform dc_coeff to code units (number of cells)
-        dc = dc_coeff/(0.5*(dx_grid.x+dx_grid.y))
+        dc = dc_coeff#/(0.5*(dx_grid.x+dx_grid.y))
 
     return dc
 # -----------
