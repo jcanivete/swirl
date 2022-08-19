@@ -229,6 +229,7 @@ class SWIRL:
         else:
             raise TypeError('The grid cell sizes grid_dx = [dx,dy] must be given as a list of floats.')
         # Initialize parameters
+        self.param_file = param_file
         self.params = read_params(param_file)
         # Initialize verbose
         if isinstance(verbose, bool):
@@ -286,6 +287,7 @@ class SWIRL:
             print('---------------------------------------------------------')
     # ------------------------------------------------------------------------
 
+
     def vorticity(self):
         """
         It computes the vorticity for every cell in the 2D grid and saves it
@@ -311,6 +313,7 @@ class SWIRL:
         t_total = timings(t_start)
         self.timings['Vorticity'] = t_total
     # -------------------------------------
+
 
     def swirlingstrength(self):
         """
@@ -338,6 +341,7 @@ class SWIRL:
         t_total = timings(t_start)
         self.timings['Swirling strength'] = t_total
     # ---------------------------------------------
+
 
     def rortex(self):
         """
@@ -539,7 +543,7 @@ class SWIRL:
             print('\n')
     # -------------------------------------
 
-    def save(self, file_name='SWIRL_vortices'):
+    def save(self, file_name='swirl_vortices'):
         """
         It saves the properties of the identified vortices in a h5py file.
 
@@ -562,9 +566,14 @@ class SWIRL:
         hf = h5py.File(file_name+'.h5','w')
         # Set attributes
         hf.attrs.__setitem__("n_vortices", self.n_vortices)
-        hf.attrs.__setitem__("radii", self.radii)
-        hf.attrs.__setitem__("centers", self.centers)
-        hf.attrs.__setitem__("orientations", self.orientations)
+        hf.attrs.__setitem__("param_file", self.param_file)
+        # Create short data datasets
+        data_group = hf.create_group('data')
+        data_group.create_dataset("radii", data=self.radii)
+        data_group.create_dataset("centers", data=self.centers)
+        data_group.create_dataset("orientations", data=self.orientations)
+        data_group.create_dataset("gevc_map", data=self.M)
+        data_group.create_dataset("rortex", data=self.R)
         # Create params dataset
         params_group = hf.create_group('params')
         params_group.create_dataset('grid_dx', data=np.array([self.grid_dx.x, self.grid_dx.y]))
