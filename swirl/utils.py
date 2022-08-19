@@ -188,7 +188,7 @@ def read_params(param_file = ''):
     config = configparser.ConfigParser()
     config.read(param_file)
     # Sanity check if the file is empty
-    if len(config.sections())==0:
+    if len(config.sections())==0 and param_file != '':
         raise RuntimeError('The parameter file is empty or it does not exist. The default values will be used.')
     # Read params and use the default ones in case they 
     # are not specified
