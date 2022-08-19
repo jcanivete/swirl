@@ -11,9 +11,12 @@ This code contains different functions that are useful
 in the SWIRL code.
 """
 # Imports
+from email.policy import default
 import time
 import math
 import numpy as np
+import configparser
+import ast
 # ----------------
 
 
@@ -152,3 +155,67 @@ def create_U(v, dl, l):
     U = np.moveaxis(U, [0, 1, 2, 3], [2, 3, 0, 1])
 
     return U
+# ----------
+
+
+def read_params(param_file = ''):
+    """
+    This routine reads a parameter file with the configparams module
+    and returns a dictionary with all the parameters needed for the 
+    SWIRL class. If no parameter file is given, then it returns the 
+    default values. 
+    
+    Parameters
+    ----------
+    param_file - string
+        The file containing the parameters. The structure is given.
+    
+    Returns
+    -------
+    param_dict - dictionary
+        A dictionary containing all the parameters.
+
+    Raises
+    ------
+    TypeError
+        If one of the parameters given is not of the correct type 
+    """
+    # Set default parameters
+    params = dict()
+    # Read config file
+    config = configparser.ConfigParser()
+    config.read(param_file)
+    # Read params and use the default ones in case they 
+    # are not specified
+    params['stencils']=ast.literal_eval(config.get('Criterion',
+                                                   'stencils',
+                                                   fallback='[1]'))
+    params['swirlstr_params']=ast.literal_eval(config.get('Criterion',
+                                                          'swirlstr_params',
+                                                          fallback='[0., 0., 0.]'))
+    params['dc_param']=config.getfloat('Clustering',
+                                       'dc_param',
+                                       fallback=3.)
+    params['dc_adaptive']=config.getboolean('Clustering',
+                                            'dc_adaptive',
+                                            fallback=True)
+    params['cluster_fast']=config.getboolean('Clustering',
+                                             'cluster_fast',
+                                             fallback=True)
+    params['cluster_kernel']=config.getint('Clustering',
+                                           'cluster_kernel',
+                                           fallback=2)
+    params['cluster_decision']=config.get('Clustering',
+                                          'cluster_decision',
+                                          fallback='delta-rho')
+    params['cluster_param']=ast.literal_eval(config.get('Clustering',
+                                                        'cluster_param',
+                                                        fallback='[1.0, 0.5, 2.0]'))
+    params['noise_param']=config.getint('Noise',
+                                        'noise_param',
+                                        fallback=1.0)
+    params['kink_param']=config.getint('Noise',
+                                        'kink_param',
+                                        fallback=1.0)
+
+    return params
