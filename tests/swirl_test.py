@@ -41,13 +41,13 @@ class CriteriaTests(unittest.TestCase):
                       verbose=False
                       )
         # Computing quantities
-        swirl.vorticity()
-        swirl.swirlingstrength()
-        swirl.rortex()
+        swirl.vorticity
+        swirl.swirling_str
+        swirl.rortex
         # Testing
-        np.testing.assert_array_equal(swirl.S[0], sstr_true)
-        np.testing.assert_array_equal(swirl.W[0], vort_true)
-        np.testing.assert_array_equal(swirl.R[0], rort_true)
+        np.testing.assert_array_equal(swirl.swirling_str[0], sstr_true)
+        np.testing.assert_array_equal(swirl.vorticity[0], vort_true)
+        np.testing.assert_array_equal(swirl.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -72,13 +72,13 @@ class CriteriaTests(unittest.TestCase):
                       verbose=False
                       )
         # Computing quantities
-        swirl.vorticity()
-        swirl.swirlingstrength()
-        swirl.rortex()
+        swirl.vorticity
+        swirl.swirling_str
+        swirl.rortex
         # Testing
-        np.testing.assert_array_equal(swirl.S[0], sstr_true)
-        np.testing.assert_array_equal(swirl.W[0], vort_true)
-        np.testing.assert_array_equal(swirl.R[0], rort_true)
+        np.testing.assert_array_equal(swirl.swirling_str[0], sstr_true)
+        np.testing.assert_array_equal(swirl.vorticity[0], vort_true)
+        np.testing.assert_array_equal(swirl.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -108,13 +108,13 @@ class CriteriaTests(unittest.TestCase):
                       verbose=False
                       )
         # Computing quantities
-        swirl.vorticity()
-        swirl.swirlingstrength()
-        swirl.rortex()
+        swirl.vorticity
+        swirl.swirling_str
+        swirl.rortex
         # Testing
-        np.testing.assert_array_equal(swirl.S[0], sstr_true)
-        np.testing.assert_array_equal(swirl.W[0], vort_true)
-        np.testing.assert_array_equal(swirl.R[0], rort_true)
+        np.testing.assert_array_equal(swirl.swirling_str[0], sstr_true)
+        np.testing.assert_array_equal(swirl.vorticity[0], vort_true)
+        np.testing.assert_array_equal(swirl.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -147,13 +147,13 @@ class CriteriaTests(unittest.TestCase):
                       verbose=False
                       )
         # Computing quantities
-        swirl.vorticity()
-        swirl.swirlingstrength()
-        swirl.rortex()
+        swirl.vorticity
+        swirl.swirling_str
+        swirl.rortex
         # Testing
-        np.testing.assert_array_almost_equal(swirl.S[0], sstr_true)
-        np.testing.assert_array_almost_equal(swirl.W[0], vort_true)
-        np.testing.assert_array_almost_equal(swirl.R[0], rort_true)
+        np.testing.assert_array_almost_equal(swirl.swirling_str[0], sstr_true)
+        np.testing.assert_array_almost_equal(swirl.vorticity[0], vort_true)
+        np.testing.assert_array_almost_equal(swirl.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -198,13 +198,13 @@ class CriteriaTests(unittest.TestCase):
                       verbose=False
                       )
         # Computing quantities
-        swirl.vorticity()
-        swirl.swirlingstrength()
-        swirl.rortex()
+        swirl.vorticity
+        swirl.swirling_str
+        swirl.rortex
         # Testing
-        np.testing.assert_array_almost_equal(swirl.S[0], sstr_true)
-        np.testing.assert_array_almost_equal(swirl.W[0], vort_true)
-        np.testing.assert_array_almost_equal(swirl.R[0], rort_true)
+        np.testing.assert_array_almost_equal(swirl.swirling_str[0], sstr_true)
+        np.testing.assert_array_almost_equal(swirl.vorticity[0], vort_true)
+        np.testing.assert_array_almost_equal(swirl.rortex[0], rort_true)
 
 # ----------------------------------------------
 

@@ -63,8 +63,8 @@ class SWIRL:
             clustering algorithm. Depending on the value of the dc_adaptive 
             parameter, it can represent the percentual number of data points that,
             in average, are considered as neighbours, i.e. inside the critical 
-            distance (False), or to define the critical distance dc = dc_param*grid_dx,
-            where grid_dx is the grid cell size.
+            distance (True), or to define the critical distance dc = dc_param in units
+            of grid cells (False).
             - Default: [3.]
         dc_adaptive : bool
             Option to use the adaptive critical distance evaluation or to use the 
@@ -101,20 +101,23 @@ class SWIRL:
         identification process.
         - Default : True
 
-    Derived Attributes
-    ------------------
-    W : list of arrays
+    Properties
+    ----------
+    vorticity : list of arrays
         List of the vorticity arrays computed from the velocity field.
 
-    S : list of arrays
+    swirling_str : list of arrays
         List of the swirling strength arrays computed from the velocity field.
     
-    R : list of arrays
+    rortex : list of arrays
         List of the Rortex arrays computed from the velocity field.
     
     M : list of arrays
         G-EVC maps.
     
+
+    Other attributes
+    ----------------
     dataCells : list
         List containing all the cells presenting curvature in their flow and
         their properties (coordinates, evc center, criterium value, ...).
@@ -152,7 +155,7 @@ class SWIRL:
         Computes the vorticity W based on the velocity field,
         stencils and grid spacing.
     
-    swirlingstrength(self)
+    swirling_str(self)
         Computes the swirling strength S based on the velocity field,
         swirl parameters, stencils and grid spacing.
     
@@ -166,7 +169,7 @@ class SWIRL:
     clustering(self)
         Performs the clustering with the adapted CFSFDP algorithm.
     
-    detect_vortics(self)
+    detect_vortices(self)
         Based on the clustering output, creates a collection of
         Vortex objects which contains the final result of the identification.
     
@@ -238,10 +241,10 @@ class SWIRL:
             raise TypeError('Verbose must be a bool.')
 
         # Initialize other quantities:
-        self.S = [0.0]
-        self.W = [0.0]
-        self.U = [0.0]
-        self.R = [0.0]
+        self._swirling_str = None
+        self._vorticity = None
+        self._vgt = None
+        self._rortex = None
         self.M = [0.0]
         self.dataCells = [0.0]
         self.timings = dict()
@@ -287,89 +290,106 @@ class SWIRL:
             print('---------------------------------------------------------')
     # ------------------------------------------------------------------------
 
-
+    @property
     def vorticity(self):
         """
-        It computes the vorticity for every cell in the 2D grid and saves it
-        as an attribute.
+        It computes the vorticity for every cell in the 2D grid, saves it
+        as an attribute, and returns it.
 
         Parameters
         ----------
 
         Returns
         -------
+        _vorticity : list
+            List of vorticity arrays computed with different stencils
 
         Raises
         ------
         """
-        # Timing
-        t_start = time.process_time()
-        # Call external function
-        self.W, self.U = compute_vorticity(self.v,
-                                           self.grid_dx,
-                                           self.params['stencils']
-                                           )
-        # Timing
-        t_total = timings(t_start)
-        self.timings['Vorticity'] = t_total
+        if self._vorticity is None:
+            # Timing
+            t_start = time.process_time()
+            # Call external function
+            (self._vorticity,
+             self._vgt) = compute_vorticity(self.v,
+                                            self.grid_dx,
+                                            self.params['stencils']
+                                            )
+            # Timing
+            t_total = timings(t_start)
+            self.timings['Vorticity'] = t_total
+        return self._vorticity
     # -------------------------------------
 
-
-    def swirlingstrength(self):
+    @property
+    def swirling_str(self):
         """
-        It computes the swirling strength for every cell in the 2D grid
-        and saves it as an attribute.
+        It computes the swirling strength for every cell in the 2D grid,
+        saves it as an attribute, and returns it.
 
         Parameters
         ----------
 
         Returns
         -------
+        _swirling_str : list
+            List of swirling strength arrays computed with different stencils
 
         Raises
         ------
         """
-        # Timing
-        t_start = time.process_time()
-        # Call external function
-        self.S, self.U = compute_swirlingstrength(self.v,
-                                                  self.grid_dx,
-                                                  self.params['stencils'],
-                                                  self.params['swirlstr_params']
-                                                  )
-        # Timing
-        t_total = timings(t_start)
-        self.timings['Swirling strength'] = t_total
+        if self._swirling_str is None:
+            # Timing
+            t_start = time.process_time()
+            # Call external function
+            (self._swirling_str,
+             self._vgt) = compute_swirlingstrength(self.v,
+                                                   self.grid_dx,
+                                                   self.params['stencils'],
+                                                   self.params['swirlstr_params']
+                                                   )
+            # Timing
+            t_total = timings(t_start)
+            self.timings['Swirling strength'] = t_total
+        return self._swirling_str
     # ---------------------------------------------
 
-
+    @property
     def rortex(self):
         """
-        It computes the rortex for every cell in the 2D grid and saves it
-        as an attribute.
+        It computes the rortex for every cell in the 2D grid,
+        saves it as an attribute, and returns it.
 
         Parameters
         ----------
 
         Returns
         -------
+        _rortex : list
+            List of rortex arrays computed with different stencils
 
         Raises
         ------
         """
-        # Timing
-        t_start = time.process_time()
-        # Call external function
-        self.R, self.S, self.U, self.W = compute_rortex(self.S,
-                                                        self.W,
-                                                        self.v,
-                                                        self.grid_dx,
-                                                        self.params['stencils'],
-                                                        self.params['swirlstr_params']
-                                                        )
-        # Timing
-        t_total = timings(t_start)
-        self.timings['Rortex'] = t_total
+        if self._rortex is None:
+            # Timing
+            t_start = time.process_time()
+            # Call external function
+            (self._rortex,
+             self._swirling_str,
+             self._vgt,
+             self._vorticity) = compute_rortex(self._swirling_str,
+                                               self._vorticity,
+                                               self.v,
+                                               self.grid_dx,
+                                               self.params['stencils'],
+                                               self.params['swirlstr_params']
+                                               )
+            # Timing
+            t_total = timings(t_start)
+            self.timings['Rortex'] = t_total
+        return self._rortex
     # ----------------------------------
 
 
@@ -392,11 +412,11 @@ class SWIRL:
         # Timing
         t_start = time.process_time()
         # Sanity check
-        if isinstance(self.R[0], float):
+        if self.rortex is None:
             raise RuntimeError('evcmap: Rortex has not been computed yet.')
         # Call external function
-        self.M, self.dataCells = compute_evcmap(self.R,
-                                                self.U,
+        self.M, self.dataCells = compute_evcmap(self._rortex,
+                                                self._vgt,
                                                 self.v,
                                                 self.grid_dx
                                                 )
@@ -516,7 +536,7 @@ class SWIRL:
         # Timing
         t_start = time.process_time()
         # Compute the mathematical criterion needed (i.e rortex)
-        self.rortex()
+        self.rortex
         # Compute the EVC map
         self.evcmap()
         # Call clustering routine to get cluster id and peaks
@@ -573,7 +593,7 @@ class SWIRL:
         data_group.create_dataset("centers", data=self.centers)
         data_group.create_dataset("orientations", data=self.orientations)
         data_group.create_dataset("gevc_map", data=self.M)
-        data_group.create_dataset("rortex", data=self.R)
+        data_group.create_dataset("rortex", data=self._rortex)
         # Create params dataset
         params_group = hf.create_group('params')
         params_group.create_dataset('grid_dx', data=np.array([self.grid_dx.x, self.grid_dx.y]))

@@ -40,11 +40,11 @@ def compute_rortex(S, W, v, dl, l, param):
     """
 
     # Check if need to compute vorticity:
-    if isinstance(W[0], float):
+    if W is None:
         W, _ = compute_vorticity(v, dl, l)
 
     # Check if need to compute swirling strength:
-    if isinstance(S[0], float):
+    if S is None:
         S, _ = compute_swirlingstrength(v, dl, l, param)
 
     # prepare R,U
