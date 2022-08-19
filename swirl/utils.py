@@ -189,8 +189,7 @@ def read_params(param_file = ''):
     config.read(param_file)
     # Sanity check if the file is empty
     if len(config.sections())==0:
-        warnings.warn('\nThe parameter file is empty or it does not exist. The default values will be used.',
-                      RuntimeWarning)
+        raise RuntimeError('The parameter file is empty or it does not exist. The default values will be used.')
     # Read params and use the default ones in case they 
     # are not specified
     params['stencils']=ast.literal_eval(config.get('Criterion',
