@@ -16,6 +16,7 @@ import time
 from typing import Type
 import h5py
 import numpy as np
+import warnings
 from .utils import timings, vector2D, read_params  # , prepare_dataframe
 from .vorticity import compute_vorticity
 from .swirlingstrength import compute_swirlingstrength
@@ -104,32 +105,35 @@ class SWIRL:
     Properties
     ----------
     vorticity : list of arrays
-        List of the vorticity arrays computed from the velocity field.
+        List of the vorticity arrays computed from the velocity field. If not yet
+        computed, it computes the quantity.
 
     swirling_str : list of arrays
-        List of the swirling strength arrays computed from the velocity field.
+        List of the swirling strength arrays computed from the velocity field. If
+        not yet computed, it computes the quantity.
     
     rortex : list of arrays
-        List of the Rortex arrays computed from the velocity field.
+        List of the Rortex arrays computed from the velocity field. If not yet
+        computed, it computes the quantity.
     
-    M : list of arrays
-        G-EVC maps.
+    gevc_map : list of arrays
+        The G-EVC map. If not yet computed, it computes the quantity.
     
 
     Other attributes
     ----------------
-    dataCells : list
+    _data_cells : list
         List containing all the cells presenting curvature in their flow and
         their properties (coordinates, evc center, criterium value, ...).
     
-    timings : dict
-        Dictionary with the timings for each one of the processes of the
-        automated identification.
-    
-    cluster_id : array
+    _cluster_id : array
         Cluster indeces for all EVC points given as input.
         0 means that the point does not belong to any cluster and is
         therefore noise.
+
+    timings : dict
+        Dictionary with the timings for each one of the processes of the
+        automated identification.
     
     noise : arrays
         List of all grid cells that are classified as noise
@@ -151,21 +155,6 @@ class SWIRL:
 
     Methods
     -------
-    vorticity(self)
-        Computes the vorticity W based on the velocity field,
-        stencils and grid spacing.
-    
-    swirling_str(self)
-        Computes the swirling strength S based on the velocity field,
-        swirl parameters, stencils and grid spacing.
-    
-    rortex(self)
-        Computes the rortex criterion R based on the velocity field,
-        swirl parameters, stencils and grid spacing.
-    
-    evcmap(self)
-        Computes the (G-)EVC map.
-    
     clustering(self)
         Performs the clustering with the adapted CFSFDP algorithm.
     
@@ -245,10 +234,11 @@ class SWIRL:
         self._vorticity = None
         self._vgt = None
         self._rortex = None
-        self.M = [0.0]
-        self.dataCells = [0.0]
+        self._gevc_map = None
+        self._data_cells = [0.0]
+        self._cluster_id = None
         self.timings = dict()
-        self.cluster_id = None
+        self._vortices_list = None
         self.radii = None
         self.centers = None
         self.orientations = None
@@ -290,6 +280,87 @@ class SWIRL:
             print('---------------------------------------------------------')
     # ------------------------------------------------------------------------
 
+
+    def __len__(self):
+        """
+        Magic method for the length of the object. It returns the number of swirls 
+        identified.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        self.n_vortices:
+            The number of vortices identified
+        
+        Raises
+        ------
+        Warning
+            If the identification process has not been done yet, it reminds it 
+            to the user.
+        """
+        if self._vortices_list is None:
+            warnings.warn("\n Warning: the identification has not been carried out yet.")
+            return 0
+        else:
+            return self.n_vortices
+    # ----------------------------
+
+    
+    def __str__(self):
+        """
+        Magic method for the representation of the class in a print statement.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        
+        Raises
+        ------
+        Warning
+            If the identification process has not been done yet, it reminds it 
+            to the user.
+        """
+        if self._vortices_list is None:
+            warnings.warn("\n Warning: the identification has not been carried out yet.")
+            return 'SWIRL Class object'
+        else:
+            return 'SWIRL Class object \n Identified vortices : '+str(self.n_vortices)
+    # --------------------------------------------------------------------------------
+
+
+    def __getitem__(self, i):
+        """
+        Magic method for indexation of SWIRL objects. It returns the vortex in the 
+        vortex list 'vortices' with the index i.
+
+        Parameters
+        ----------
+        i : int
+            The index of the vortex
+
+        Returns
+        -------
+        v : Vortex object
+            The vortex with index i
+        
+        Raises
+        ------
+        Warning
+            If the identification process has not been done yet, it reminds it 
+            to the user.
+        """
+        if self._vortices_list is None:
+            warnings.warn("\n Warning: the identification has not been carried out yet.")
+            return
+        else:
+            return self._vortices_list[i]
+    # -----------------------------
+
+
     @property
     def vorticity(self):
         """
@@ -321,6 +392,7 @@ class SWIRL:
             self.timings['Vorticity'] = t_total
         return self._vorticity
     # -------------------------------------
+
 
     @property
     def swirling_str(self):
@@ -354,6 +426,7 @@ class SWIRL:
             self.timings['Swirling strength'] = t_total
         return self._swirling_str
     # ---------------------------------------------
+
 
     @property
     def rortex(self):
@@ -393,7 +466,8 @@ class SWIRL:
     # ----------------------------------
 
 
-    def evcmap(self):
+    @property
+    def gevc_map(self):
         """
         It computes the (G-)EVC map with the choosen criterion
 
@@ -402,28 +476,32 @@ class SWIRL:
 
         Returns
         -------
+        The G-EVC map
 
         Raises
         ------
         """
-        # Print status
-        if self.verbose:
-            print('--- Computing EVC map')
-        # Timing
-        t_start = time.process_time()
-        # Sanity check
-        if self.rortex is None:
-            raise RuntimeError('evcmap: Rortex has not been computed yet.')
-        # Call external function
-        self.M, self.dataCells = compute_evcmap(self._rortex,
-                                                self._vgt,
-                                                self.v,
-                                                self.grid_dx
-                                                )
-        # Timing
-        t_total = timings(t_start)
-        self.timings['EVC map'] = t_total
+        if self._gevc_map is None:
+            # Print status
+            if self.verbose:
+                print('--- Computing EVC map')
+            # Timing
+            t_start = time.process_time()
+            # Sanity check
+            if self._rortex is None:
+                self.rortex
+            # Call external function
+            self._gevc_map, self._data_cells = compute_evcmap(self._rortex,
+                                                              self._vgt,
+                                                              self.v,
+                                                              self.grid_dx
+                                                              )
+            # Timing
+            t_total = timings(t_start)
+            self.timings['EVC map'] = t_total
+        return self._gevc_map
     # -----------------------------------
+
 
     def clustering(self):
         """
@@ -445,26 +523,32 @@ class SWIRL:
         # Timing
         t_start = time.process_time()
         # Checking that EVC map has been computed
-        if isinstance(self.M[0], float):
-            raise ValueError('Clustering: EVC map has not been computed.')
+        if self._gevc_map is None:
+            self.gevc_map
         # Prepare data for clustering algorithm
-        self.data = prepare_data(self.M, self.dataCells, self.params['cluster_fast'])
+        self.data = prepare_data(self._gevc_map, self._data_cells, self.params['cluster_fast'])
         # Call clustering algorithm
-        self.cluster_id, self.peaks_ind, self.rho, self.delta, self.dc, self.d = findcluster2D(self.data,
-                                                                                               self.params['dc_param'],
-                                                                                               self.params['dc_adaptive'],
-                                                                                               self.grid_dx,
-                                                                                               self.params['cluster_fast'],
-                                                                                               self.params['cluster_kernel'],
-                                                                                               self.params['cluster_decision'],
-                                                                                               self.params['cluster_params']
-                                                                                               )
+        (self._cluster_id,
+         self.peaks_ind,
+         self.rho,
+         self.delta,
+         self.dc,
+         self.d) = findcluster2D(self.data,
+                                 self.params['dc_param'],
+                                 self.params['dc_adaptive'],
+                                 self.grid_dx,
+                                 self.params['cluster_fast'],
+                                 self.params['cluster_kernel'],
+                                 self.params['cluster_decision'],
+                                 self.params['cluster_params']
+                                 )
         # Create gamma
         self.gamma = self.rho*self.delta
         # Timing
         t_total = timings(t_start)
         self.timings['Clustering'] = t_total
     # --------------------------------------
+
 
     def detect_vortices(self):
         """
@@ -486,13 +570,13 @@ class SWIRL:
         # Timing
         t_start = time.process_time()
         # Sanity check
-        if self.cluster_id is None:
-            raise ValueError('Detection: Clustering has not been done.')
+        if self._cluster_id is None:
+            raise RuntimeError('Detection: Clustering has not been done.')
         # Call detection routine for vortex identification
-        if self.cluster_id.size > 0:
-            self.vortices, self.noise = detection(self.dataCells,
-                                                  self.M,
-                                                  self.cluster_id,
+        if self._cluster_id.size > 0:
+            self._vortices_list, self.noise = detection(self._data_cells,
+                                                  self._gevc_map,
+                                                  self._cluster_id,
                                                   self.peaks_ind,
                                                   self.params['cluster_fast'],
                                                   self.params['noise_param'],
@@ -500,17 +584,18 @@ class SWIRL:
                                                   self.grid_dx
                                                   )
         else:
-            self.vortices = []
+            self._vortices_list = []
             self.noise = []
         # Store main quantities
-        self.radii = np.array([v.r for v in self.vortices])
-        self.centers = np.array([v.center for v in self.vortices])
-        self.orientations = np.array([v.orientation for v in self.vortices])
-        self.n_vortices = len(self.vortices)
+        self.radii = np.array([v.r for v in self._vortices_list])
+        self.centers = np.array([v.center for v in self._vortices_list])
+        self.orientations = np.array([v.orientation for v in self._vortices_list])
+        self.n_vortices = len(self._vortices_list)
         # Timing
         t_total = timings(t_start)
         self.timings['Detection'] = t_total
     # -------------------------------------
+
 
     def run(self):
         """
@@ -538,7 +623,7 @@ class SWIRL:
         # Compute the mathematical criterion needed (i.e rortex)
         self.rortex
         # Compute the EVC map
-        self.evcmap()
+        self.gevc_map
         # Call clustering routine to get cluster id and peaks
         self.clustering()
         # Call detection routine to identify vortices
@@ -553,7 +638,7 @@ class SWIRL:
             print('--- Identification completed ')
             print('---------------------------------------------------------')
             print('---')
-            print('--- Identified vortices:', len(self.vortices))
+            print('--- Identified vortices:', self.n_vortices)
             print('---')
             print('--- Timings')
             for t in self.timings:
@@ -562,6 +647,7 @@ class SWIRL:
             print('---------------------------------------------------------')
             print('\n')
     # -------------------------------------
+
 
     def save(self, file_name='swirl_vortices'):
         """
@@ -592,7 +678,7 @@ class SWIRL:
         data_group.create_dataset("radii", data=self.radii)
         data_group.create_dataset("centers", data=self.centers)
         data_group.create_dataset("orientations", data=self.orientations)
-        data_group.create_dataset("gevc_map", data=self.M)
+        data_group.create_dataset("gevc_map", data=self._gevc_map)
         data_group.create_dataset("rortex", data=self._rortex)
         # Create params dataset
         params_group = hf.create_group('params')
@@ -604,12 +690,11 @@ class SWIRL:
         for n in np.arange(self.n_vortices):
             vortex_group = hf.create_group('vortices/'+str(n).zfill(5))
             # Save radius, center, orientation, cells, evc, rortex
-            vortex_group.create_dataset("r", (1,), data=self.vortices[n].r)
-            vortex_group.create_dataset("center", (2,), data=self.vortices[n].center)
-            vortex_group.create_dataset("orientation", (1,), data=self.vortices[n].orientation)
-            vortex_group.create_dataset("cells" , data=self.vortices[n].cells)
-            vortex_group.create_dataset("evc", data=self.vortices[n].evc)
-            vortex_group.create_dataset("rortex", data=self.vortices[n].X)
+            vortex_group.create_dataset("r", (1,), data=self._vortices_list[n].r)
+            vortex_group.create_dataset("center", (2,), data=self._vortices_list[n].center)
+            vortex_group.create_dataset("orientation", (1,), data=self._vortices_list[n].orientation)
+            vortex_group.create_dataset("cells" , data=self._vortices_list[n].cells)
+            vortex_group.create_dataset("evc", data=self._vortices_list[n].evc)
+            vortex_group.create_dataset("rortex", data=self._vortices_list[n].X)
         # Close file
         hf.close()
-
