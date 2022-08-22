@@ -32,7 +32,7 @@ class Vortex:
         array with EVC's coordinates for each cell
     ecr : array
         array with curvature radius of each cell
-    X : array
+    rortex : array
         vortex detection criteria values for each cell
     stencils : array
         array of stencils used per cell
@@ -81,7 +81,7 @@ class Vortex:
                  cells,
                  evc,
                  ecr,
-                 X,
+                 rortex,
                  stencils,
                  cluster_id,
                  dl
@@ -96,11 +96,11 @@ class Vortex:
         cells : array
             coordinates of cells belonging to vortex
         evc : array
-            array with EVC's coordinates for each cell
+            array with EVC's coordinates for all cells
         ecr : array
-            array with curvature radius of each cell
-        X : array
-            vortex detection criteria values for each cell
+            array with curvature radius of all cells
+        rortex : array
+            Rortex values for all cells
         stencils : array
             array of stencils used per cell
         cluster_id : int
@@ -114,48 +114,53 @@ class Vortex:
         Raises
         ------
         """
-        # initialize center
-        self.cluster_center = cluster_center
-
-        # initialize cells
-        self.cells = cells
-
-        # initialize EVCs
+        # Initialize attributes
         self.evc = evc
+        self.rortex = rortex
+        self.stencils = stencils
+        self.dl = dl
+        self._cluster_center = cluster_center
+        self._all_cells = cells
+        self._ecr = ecr
+        self._cluster_id = cluster_id
 
-        # initialize ecr
-        self.ecr = ecr
-
-        # initialize crit
-        self.X = X
-
+        # Compute other properties
         # initialize orientation
         # + 1 : anti-clockwise
         # - 1 : clockwise
-        self.orientation = np.sign(np.mean(self.X))
-
-        # initialize stencils
-        self.stencils = stencils
-
-        # initialize cluster_id
-        self.cluster_id = cluster_id
-
-        # initialize dl
-        self.dl = dl
-
-        # Compute other properties
+        self.orientation = np.sign(np.mean(self.rortex))
         # initialize unique_cells
         self.unique_cells = self.compute_uniquecells()
-
         # Initialize N_tot and N_unique
-        self.N_tot, self.N_unique = self.compute_numbercells()
-
+        self._num_all_cells, self.N_unique = self.compute_numbercells()
         # Compute radius
         self.r = self.compute_radius()
-
         # Center of the vortex. Initialize to cluster_center
-        self.center = self.cluster_center
+        self.center = self._cluster_center
     # -----------------------------------
+
+    def __str__(self):
+        """
+        Magic method for printing the class as a string.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        
+        Raises
+        ------
+        """
+        if self.orientation == 1.0:
+            text = 'Counter-clockwise vortex,\n'
+        elif self.orientation == -1.0:
+            text = 'Clockwise vortex,\n'
+        text += '---        Center : '+f'{self.center[0]:.2f}'+', '+f'{self.center[0]:.2f}'+',\n'
+        text += '---        Radius : '+f'{self.r:.2f}'+';'
+        return text
+    # -------------
+
 
     def compute_uniquecells(self):
         """
@@ -174,9 +179,9 @@ class Vortex:
         """
         unique_cells = np.array([[0, 0]])
 
-        if self.cells.shape[1] > 0:
+        if self._all_cells.shape[1] > 0:
             # cells coordinates
-            cells_all = self.cells.T
+            cells_all = self._all_cells.T
 
             # Remove duplicates
             unique_cells = np.unique(cells_all, axis=0)
@@ -202,7 +207,7 @@ class Vortex:
         Raises
         ------
         """
-        N_tot = self.cells.shape[1]
+        N_tot = self._all_cells.shape[1]
         N_unique = self.unique_cells.shape[1]
 
         return N_tot, N_unique
@@ -293,7 +298,7 @@ class Vortex:
             self.unique_cells = self.compute_uniquecells()
 
             # compute N_tot and N_unique
-            self.N_tot, self.N_unique = self.compute_numbercells()
+            self._num_all_cells, self.N_unique = self.compute_numbercells()
 
             # Compute radius
             self.r = self.compute_radius()
@@ -301,7 +306,7 @@ class Vortex:
             # Center of the vortex
             self.center = self.compute_center()
         else:
-            self.N_tot = 0
+            self._num_all_cells = 0
 
         return
     # --------
@@ -335,8 +340,8 @@ class Vortex:
         # load necessary quantities
         evc_x = self.evc[0]
         evc_y = self.evc[1]
-        cell_x = self.cells[0]
-        cell_y = self.cells[1]
+        cell_x = self._all_cells[0]
+        cell_y = self._all_cells[1]
         cx = self.center[0]
         cy = self.center[1]
 
@@ -361,30 +366,30 @@ class Vortex:
         noise = np.zeros((7, mask.shape[0]))
         noise[0] = self.evc[0][mask]   # EVC coord x
         noise[1] = self.evc[1][mask]   # EVC coord y
-        noise[2] = self.cells[0][mask]  # Cells coord x
-        noise[3] = self.cells[1][mask]  # Cells coord y
-        noise[4] = self.X[mask]        # Criteria
-        noise[5] = self.ecr[mask]      # Estimated radius
+        noise[2] = self._all_cells[0][mask]  # Cells coord x
+        noise[3] = self._all_cells[1][mask]  # Cells coord y
+        noise[4] = self.rortex[mask]        # Criteria
+        noise[5] = self._ecr[mask]      # Estimated radius
         noise[6] = self.stencils[mask]  # Stencils indices
 
         # Remove these points from the vortex data points
         # Cells
-        cells_tmp0 = np.delete(self.cells[0], mask)
-        cells_tmp1 = np.delete(self.cells[1], mask)
-        self.cells = np.array([cells_tmp0, cells_tmp1])
+        cells_tmp0 = np.delete(self._all_cells[0], mask)
+        cells_tmp1 = np.delete(self._all_cells[1], mask)
+        self._all_cells = np.array([cells_tmp0, cells_tmp1])
         # EVC
         evc_tmp0 = np.delete(self.evc[0], mask)
         evc_tmp1 = np.delete(self.evc[1], mask)
         self.evc = np.array([evc_tmp0, evc_tmp1])
         # Criteria
-        self.X = np.delete(self.X, mask)
+        self.rortex = np.delete(self.rortex, mask)
         # Estimated radius of curvature
-        self.ecr = np.delete(self.ecr, mask)
+        self._ecr = np.delete(self._ecr, mask)
         # Stencils
         self.stencils = np.delete(self.stencils, mask)
 
         # Update properties of vortex
-        self.N_tot, self.N_unique = self.compute_numbercells()
+        self._num_all_cells, self.N_unique = self.compute_numbercells()
 
         # Return noise
         return noise
@@ -424,8 +429,8 @@ class Vortex:
         # I expect to see RuntimeWarnings in this block
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            cx_2 = np.mean(self.cells[0])
-            cy_2 = np.mean(self.cells[1])
+            cx_2 = np.mean(self._all_cells[0])
+            cy_2 = np.mean(self._all_cells[1])
 
         # Compute distance between two centers
         d = np.sqrt((cx-cx_2)**2 + (cy-cy_2)**2)
@@ -438,21 +443,21 @@ class Vortex:
         # If d is larger than r, then it is a kink
         if d > kink_f*r:
             # Create kinks array of the type dataCells
-            kinks = np.zeros((7, self.N_tot))
+            kinks = np.zeros((7, self._num_all_cells))
             kinks[0] = self.evc[0]   # EVC coord x
             kinks[1] = self.evc[1]   # EVC coord y
-            kinks[2] = self.cells[0]  # Cells coord x
-            kinks[3] = self.cells[1]  # Cells coord y
-            kinks[4] = self.X        # Criteria
-            kinks[5] = self.ecr      # Estimated radius
+            kinks[2] = self._all_cells[0]  # Cells coord x
+            kinks[3] = self._all_cells[1]  # Cells coord y
+            kinks[4] = self.rortex        # Criteria
+            kinks[5] = self._ecr      # Estimated radius
             kinks[6] = self.stencils  # Stencils indices
 
             # Update vortex structure
             self.evc = np.array([[0, 0]])
-            self.cells = np.array([[0, 0]])
+            self._all_cells = np.array([[0, 0]])
             self.unique_cells = np.array([[0, 0]])
-            self.X = 0
-            self.ecr = 0
+            self.rortex = 0
+            self._ecr = 0
             self.stencils = [0]
 
             # Empty to true because vortex if empty
@@ -552,7 +557,7 @@ def detection(dataCells,
         v = Vortex(cluster_center=[xc, yc],
                    cells=cluster_data[2:4],
                    evc=cluster_data[:2],
-                   X=cluster_data[4],
+                   rortex=cluster_data[4],
                    ecr=cluster_data[5],
                    stencils=cluster_data[6],
                    cluster_id=idx,
@@ -560,7 +565,7 @@ def detection(dataCells,
                    )
 
         # Loop for noise identification:
-        Ni = v.N_tot  # Number of cells in vortex
+        Ni = v._num_all_cells  # Number of cells in vortex
         dN = Ni      # Number of cells during last iteration
 
         while dN > 1 and Ni > 0:  # Loop until vortex is void
@@ -591,11 +596,11 @@ def detection(dataCells,
             v.update(empty)
 
             # Stop if N didn't change or if N=0
-            dN = Ni - v.N_tot
-            Ni = v.N_tot
+            dN = Ni - v._num_all_cells
+            Ni = v._num_all_cells
 
         # Append vortex
-        if v.N_tot > 1:
+        if v._num_all_cells > 1:
             vortices.append(v)
 
     # Make array of noise cells
