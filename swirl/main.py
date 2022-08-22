@@ -122,15 +122,6 @@ class SWIRL:
 
     Other attributes
     ----------------
-    _data_cells : list
-        List containing all the cells presenting curvature in their flow and
-        their properties (coordinates, evc center, criterium value, ...).
-    
-    _cluster_id : array
-        Cluster indeces for all EVC points given as input.
-        0 means that the point does not belong to any cluster and is
-        therefore noise.
-
     timings : dict
         Dictionary with the timings for each one of the processes of the
         automated identification.
@@ -246,38 +237,40 @@ class SWIRL:
 
         # Print verbose
         if self.verbose:
-            print('---------------------------------------------------------')
-            print('---                                                   ---')
-            print('---    _/_/_/  _/          _/  _/   _/_/_/    _/      ---')
-            print('---  _/         _/        _/   _/   _/    _/  _/      ---')
-            print('---    _/_/      _/      _/    _/   _/_/_/    _/      ---')
-            print('---        _/     _/ _/ _/     _/   _/  _/    _/      ---')
-            print('---  _/_/_/        _/  _/      _/   _/   _/   _/_/_/  ---')
-            print('---                                                   ---')
-            print('---------------------------------------------------------')
-            print('---------------------------------------------------------')
-            print('---                                                   ---')
-            print('---               (c) IRSOL, 11.04.2022               ---')
-            print('---                                                   ---')
-            print('--- Author:      José Roberto Canivete Cuissa         ---')
-            print('--- Email:       jcanivete@ics.uzh.ch                 ---')
-            print('---------------------------------------------------------')
-            print('---')
-            print('--- Parameters:')
-            print('---------------')
-            print('---    grid_dx          :', self.dx, ', ', self.dy)
-            print('---    stencil          :', self.params['stencils'])
-            print('---    swirlstr_params  :', self.params['swirlstr_params'])
-            print('---    dc_param         :', self.params['dc_param'])
-            print('---    dc_adaptive      :', self.params['dc_adaptive'])
-            print('---    cluster_fast     :', self.params['cluster_fast'])
-            print('---    cluster_kernel   :', self.params['cluster_kernel'])
-            print('---    cluster_decision :', self.params['cluster_decision'])
-            print('---    cluster_params   :', self.params['cluster_params'])
-            print('---    noise_param      :', self.params['noise_param'])
-            print('---    kink_param       :', self.params['kink_param'])
-            print('---')
-            print('---------------------------------------------------------')
+            self._text = ''
+            self._text+= '---------------------------------------------------------\n'
+            self._text+= '---                                                   ---\n'
+            self._text+= '---    _/_/_/  _/          _/  _/   _/_/_/    _/      ---\n'
+            self._text+= '---  _/         _/        _/   _/   _/    _/  _/      ---\n'
+            self._text+= '---    _/_/      _/      _/    _/   _/_/_/    _/      ---\n'
+            self._text+= '---        _/     _/ _/ _/     _/   _/  _/    _/      ---\n'
+            self._text+= '---  _/_/_/        _/  _/      _/   _/   _/   _/_/_/  ---\n'
+            self._text+= '---                                                   ---\n'
+            self._text+= '---------------------------------------------------------\n'
+            self._text+= '---------------------------------------------------------\n'
+            self._text+= '---                                                   ---\n'
+            self._text+= '---               (c) IRSOL, 11.04.2022               ---\n'
+            self._text+= '---                                                   ---\n'
+            self._text+= '--- Author:      José Roberto Canivete Cuissa         ---\n'
+            self._text+= '--- Email:       jcanivete@ics.uzh.ch                 ---\n'
+            self._text+= '---------------------------------------------------------\n'
+            self._text+= '---\n'
+            self._text+= '--- Parameters:\n'
+            self._text+= '---------------\n'
+            self._text+= '---    grid_dx          : '+str(self.dx)+', '+str(self.dy)+'\n'
+            self._text+= '---    stencil          : '+str(self.params['stencils'])+'\n'
+            self._text+= '---    swirlstr_params  : '+str(self.params['swirlstr_params'])+'\n'
+            self._text+= '---    dc_param         : '+str(self.params['dc_param'])+'\n'
+            self._text+= '---    dc_adaptive      : '+str(self.params['dc_adaptive'])+'\n'
+            self._text+= '---    cluster_fast     : '+str(self.params['cluster_fast'])+'\n'
+            self._text+= '---    cluster_kernel   : '+str(self.params['cluster_kernel'])+'\n'
+            self._text+= '---    cluster_decision : '+str(self.params['cluster_decision'])+'\n'
+            self._text+= '---    cluster_params   : '+str(self.params['cluster_params'])+'\n'
+            self._text+= '---    noise_param      : '+str(self.params['noise_param'])+'\n'
+            self._text+= '---    kink_param       : '+str(self.params['kink_param'])+'\n'
+            self._text+= '---\n'
+            self._text+= '---------------------------------------------------------\n'
+            print(self._text)
     # ------------------------------------------------------------------------
 
 
@@ -307,8 +300,8 @@ class SWIRL:
             return self.n_vortices
     # ----------------------------
 
-    
-    def __str__(self):
+
+    def __repr__(self):
         """
         Magic method for the representation of the class in a print statement.
 
@@ -320,15 +313,36 @@ class SWIRL:
         
         Raises
         ------
-        Warning
-            If the identification process has not been done yet, it reminds it 
-            to the user.
         """
-        if self._vortices_list is None:
-            warnings.warn("\n Warning: the identification has not been carried out yet.")
-            return 'SWIRL Class object'
+        if self._vortices_list:
+            return 'SWIRL Class object. Vortices identified : '+str(self.n_vortices)
         else:
-            return 'SWIRL Class object \n Identified vortices : '+str(self.n_vortices)
+            return 'SWIRL Class object. Identification not yet performed'
+    
+    def __str__(self):
+        """
+        Magic method for printing the class as a string.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        
+        Raises
+        ------
+        """
+        print(self._text[:-59])
+        if self._vortices_list:
+            print('--- Identification:')
+            print('-------------------')
+            print('---    Number of identified vortices :', self.n_vortices)
+            print('---    Details:')
+            for vortex in self._vortices_list:
+                print(vortex)
+        print('---')
+        print('---------------------------------------------------------')
+        return '\n'
     # --------------------------------------------------------------------------------
 
 
@@ -526,22 +540,22 @@ class SWIRL:
         if self._gevc_map is None:
             self.gevc_map
         # Prepare data for clustering algorithm
-        self.data = prepare_data(self._gevc_map, self._data_cells, self.params['cluster_fast'])
+        self._data = prepare_data(self._gevc_map, self._data_cells, self.params['cluster_fast'])
         # Call clustering algorithm
         (self._cluster_id,
-         self.peaks_ind,
+         self._peaks_ind,
          self.rho,
          self.delta,
-         self.dc,
-         self.d) = findcluster2D(self.data,
-                                 self.params['dc_param'],
-                                 self.params['dc_adaptive'],
-                                 self.grid_dx,
-                                 self.params['cluster_fast'],
-                                 self.params['cluster_kernel'],
-                                 self.params['cluster_decision'],
-                                 self.params['cluster_params']
-                                 )
+         self._dc,
+         self._d) = findcluster2D(self._data,
+                                  self.params['dc_param'],
+                                  self.params['dc_adaptive'],
+                                  self.grid_dx,
+                                  self.params['cluster_fast'],
+                                  self.params['cluster_kernel'],
+                                  self.params['cluster_decision'],
+                                  self.params['cluster_params']
+                                  )
         # Create gamma
         self.gamma = self.rho*self.delta
         # Timing
@@ -575,14 +589,14 @@ class SWIRL:
         # Call detection routine for vortex identification
         if self._cluster_id.size > 0:
             self._vortices_list, self.noise = detection(self._data_cells,
-                                                  self._gevc_map,
-                                                  self._cluster_id,
-                                                  self.peaks_ind,
-                                                  self.params['cluster_fast'],
-                                                  self.params['noise_param'],
-                                                  self.params['kink_param'],
-                                                  self.grid_dx
-                                                  )
+                                                        self._gevc_map,
+                                                        self._cluster_id,
+                                                        self._peaks_ind,
+                                                        self.params['cluster_fast'],
+                                                        self.params['noise_param'],
+                                                        self.params['kink_param'],
+                                                        self.grid_dx
+                                                        )
         else:
             self._vortices_list = []
             self.noise = []
