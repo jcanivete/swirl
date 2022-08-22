@@ -233,7 +233,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
     # ----------------------------------------------
     def test_const_velocity(self):
@@ -256,7 +256,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
     # ----------------------------------------------
     def test_shear_flow(self):
@@ -283,7 +283,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
     # ----------------------------------------------
     def test_rotational_vortex(self):
@@ -313,7 +313,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
     # ----------------------------------------------
     def test_lamb_oseen_vortex(self):
@@ -354,7 +354,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
     # ----------------------------------------------
     def test_double_lamb_oseen_vortex(self):
@@ -380,7 +380,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
     # ----------------------------------------------
     def test_multiple_vortices(self):
@@ -403,7 +403,7 @@ class IdentificationTests(unittest.TestCase):
         # Run algorithm
         swirl.run()
         # Testing
-        self.assertEqual(len(swirl.vortices), n_vortices_true)
+        self.assertEqual(len(swirl), n_vortices_true)
 
 # ----------------------------------------------
 
@@ -436,7 +436,7 @@ class EVCMapTests(unittest.TestCase):
                       )
         # Testing
         swirl.run()
-        np.testing.assert_array_equal(swirl.M, evc_map_true)
+        np.testing.assert_array_equal(swirl.gevc_map, evc_map_true)
 
 
 # ---------------------------------------------------------
