@@ -338,12 +338,14 @@ class SWIRL:
             print('-------------------')
             print('---    Number of identified vortices :', self.n_vortices)
             print('---    Details:')
+            n = 0
             for vortex in self._vortices_list:
-                print(vortex)
+                print('--- ',n,'.  ',vortex)
+                n+=1
         print('---')
         print('---------------------------------------------------------')
         return '\n'
-    # --------------------------------------------------------------------------------
+    # -------------
 
 
     def __getitem__(self, i):
@@ -709,6 +711,6 @@ class SWIRL:
             vortex_group.create_dataset("orientation", (1,), data=self._vortices_list[n].orientation)
             vortex_group.create_dataset("cells" , data=self._vortices_list[n].cells)
             vortex_group.create_dataset("evc", data=self._vortices_list[n].evc)
-            vortex_group.create_dataset("rortex", data=self._vortices_list[n].X)
+            vortex_group.create_dataset("rortex", data=self._vortices_list[n].rortex)
         # Close file
         hf.close()
