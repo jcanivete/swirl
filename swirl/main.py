@@ -338,9 +338,11 @@ class SWIRL:
             print('-------------------')
             print('---    Number of identified vortices :', self.n_vortices)
             print('---    Details:')
+            print('---------------')
             n = 0
             for vortex in self._vortices_list:
                 print('--- ',n,'.  ',vortex)
+                print('---------------')
                 n+=1
         print('---')
         print('---------------------------------------------------------')
@@ -603,7 +605,7 @@ class SWIRL:
             self._vortices_list = []
             self.noise = []
         # Store main quantities
-        self.radii = np.array([v.r for v in self._vortices_list])
+        self.radii = np.array([v.radius for v in self._vortices_list])
         self.centers = np.array([v.center for v in self._vortices_list])
         self.orientations = np.array([v.orientation for v in self._vortices_list])
         self.n_vortices = len(self._vortices_list)
@@ -694,8 +696,8 @@ class SWIRL:
         data_group.create_dataset("radii", data=self.radii)
         data_group.create_dataset("centers", data=self.centers)
         data_group.create_dataset("orientations", data=self.orientations)
-        data_group.create_dataset("gevc_map", data=self._gevc_map)
-        data_group.create_dataset("rortex", data=self._rortex)
+        data_group.create_dataset("gevc_map", data=self.gevc_map)
+        data_group.create_dataset("rortex", data=self.rortex)
         # Create params dataset
         params_group = hf.create_group('params')
         params_group.create_dataset('grid_dx', data=np.array([self.grid_dx.x, self.grid_dx.y]))
@@ -706,11 +708,13 @@ class SWIRL:
         for n in np.arange(self.n_vortices):
             vortex_group = hf.create_group('vortices/'+str(n).zfill(5))
             # Save radius, center, orientation, cells, evc, rortex
-            vortex_group.create_dataset("r", (1,), data=self._vortices_list[n].r)
-            vortex_group.create_dataset("center", (2,), data=self._vortices_list[n].center)
-            vortex_group.create_dataset("orientation", (1,), data=self._vortices_list[n].orientation)
-            vortex_group.create_dataset("cells" , data=self._vortices_list[n].cells)
-            vortex_group.create_dataset("evc", data=self._vortices_list[n].evc)
-            vortex_group.create_dataset("rortex", data=self._vortices_list[n].rortex)
+            vortex_group.create_dataset("r", (1,), data=self[n].radius)
+            vortex_group.create_dataset("center", (2,), data=self[n].center)
+            vortex_group.create_dataset("orientation", (1,), data=self[n].orientation)
+            vortex_group.create_dataset("all_cells" , data=self[n].all_cells)
+            vortex_group.create_dataset("vortex_cells", data=self[n].vortex_cells)
+            vortex_group.create_dataset("evc", data=self[n].evc)
+            vortex_group.create_dataset("rortex", data=self[n].rortex)
+            vortex_group.create_dataset("cluster_center", data=self[n].cluster_center)
         # Close file
         hf.close()
