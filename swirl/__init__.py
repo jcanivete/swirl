@@ -55,4 +55,4 @@ from .evcmap import radius, direction
 from .utils import vector2D, create_U, read_params
 from .cluster import compute_delta, compute_rho, prepare_data, compute_dc, clustering
 from .vortex import detection
-from .plots import plot_decision, plot_evcmap, plot_vortices
+from .plots import plot_rortex, plot_gevc_map, plot_decision, plot_vortices

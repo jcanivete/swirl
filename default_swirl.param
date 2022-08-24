@@ -1,16 +1,4 @@
 # SWIRL parameters file with default values
-# The parameter file must have this structure:
-#
-#       [Criterion]
-#        ...
-#       [Clustering]
-#        ...
-#       [Noise]
-#        ...
-#
-# The various parameters can be omitted. In that case,
-# the default values (the ones showed here) will be used 
-# by the SWIRL code.
 
 [Criterion]
 stencils : [1]

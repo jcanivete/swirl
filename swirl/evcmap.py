@@ -15,7 +15,7 @@ import numpy as np
 # ----------------
 
 
-def compute_evcmap(X, U, v, dl):
+def compute_evcmap(rortex, vgt, v, grid_dx):
     """
     Computes the EVC map arrays for all the stencils given the
     mathematical criterion, the velocity field and its gradients, and
@@ -23,13 +23,13 @@ def compute_evcmap(X, U, v, dl):
 
     Parameters
     ----------
-    X : list of arrays
+    rortex : list of arrays
         Mathematical criterion arrays
-    U : list of arrays
+    vgt : list of arrays
         Velocity gradient tensor arrays
     v : 2D vector
         Velocity field.
-    dl : 2D vector
+    grid_dx : 2D vector
         Grid cell size
 
     Returns
@@ -47,28 +47,28 @@ def compute_evcmap(X, U, v, dl):
     dataCells = []
 
     # get size of grid
-    nx = X[0].shape[0]
-    ny = X[0].shape[1]
+    nx = rortex[0].shape[0]
+    ny = rortex[0].shape[1]
 
     # Initialize the cardinality of EVC map
     S = np.zeros((nx, ny))
 
     # loop over stencils:
-    for n in np.arange(len(X)):
+    for n in np.arange(len(rortex)):
 
         # build grids
         x, y = np.meshgrid(np.arange(0, nx), np.arange(0, ny), indexing='ij')
 
         # compute estimated radius (in units)
-        r = radius(X[n], v)
+        r = radius(rortex[n], v)
 
         # compute estimated center direction
-        ex, ey = direction(U[n], v, dl)
+        ex, ey = direction(vgt[n], v)
 
         # compute jump in pixels to reach
         # center from coordinates
-        px = r*ex/dl.x
-        py = r*ey/dl.y
+        px = r*ex/grid_dx.x
+        py = r*ey/grid_dx.y
 
         # Build center maps
         xc = x + px
@@ -82,8 +82,8 @@ def compute_evcmap(X, U, v, dl):
         yc = np.where(yc < 0., -1., yc)
 
         # Flag ecvs where criterion is null
-        xc = np.where(X[n] == 0., -1., xc)
-        yc = np.where(X[n] == 0., -1., yc)
+        xc = np.where(rortex[n] == 0., -1., xc)
+        yc = np.where(rortex[n] == 0., -1., yc)
 
         # Flatten all quantities
         x = x.flatten()
@@ -91,7 +91,7 @@ def compute_evcmap(X, U, v, dl):
         xc = xc.flatten()
         yc = yc.flatten()
         r = r.flatten()
-        Xi = X[n].flatten()
+        Xi = rortex[n].flatten()
 
         # Remove the flagged points
         mask = np.where(xc == -1.)
@@ -113,10 +113,10 @@ def compute_evcmap(X, U, v, dl):
         # Define coordinate of cell centers and weights
         xcell = np.round(xc)
         ycell = np.round(yc)
-        w = np.sign(Xi)
+        weight = np.sign(Xi)
 
         # Compute number of points per cell with np.histogram
-        Si, _, _ = np.histogram2d(xcell, ycell, weights=w, bins=[
+        Si, _, _ = np.histogram2d(xcell, ycell, weights=weight, bins=[
                                   np.arange(0, nx+1), np.arange(0, ny+1)])
 
         # Remove single counters
@@ -170,14 +170,14 @@ def compute_evcmap(X, U, v, dl):
 # ---------------------
 
 
-def radius(X, v):
+def radius(rortex, v):
     """
     Computes the radius of curvature for all the cells where
     the flow appears to be curved (mathematical criteria != 0).
 
     Parameters
     ----------
-    X : array
+    rortex : array
         Mathematical criterion array
     v : 2D vector
         Velocity field.
@@ -194,45 +194,43 @@ def radius(X, v):
     vnorm = np.sqrt(v.x**2 + v.y**2)
 
     # radius in units
-    # ! avoid X = 0.0 points
+    # ! avoid rortex = 0.0 points
     with np.errstate(divide='ignore'):
-        r = np.where(np.abs(X) == 0.,  0., 2.*vnorm/np.abs(X))
+        r = np.where(np.abs(rortex) == 0.,  0., 2.*vnorm/np.abs(rortex))
 
     return r
 # ----------
 
 
-def direction(U, v, dl):
+def direction(vgt, v):
     """
     Computes the radial direction for all the cells where
     the flow appears to be curved (mathematical criteria != 0).
 
     Parameters
     ----------
-    U : list of arrays
+    vgt : list of arrays
         Velocity gradient tensor arrays
     v : 2D vector
         Velocity field.
-    dl : 2D vector
-        Grid cell size
 
     Returns
     -------
     ex : array
-        The x radial direction (grid units).
+        The x radial direction (normalized).
     ey : array
-        The y radial direction (grid units).
+        The y radial direction (normalized).
 
     Raises
     ------
     """
-    # invert U
+    # invert vgt
     # ! all non invertible points already treated in swirling strength
-    Uinv = np.linalg.inv(U)
+    vgt_inv = np.linalg.inv(vgt)
 
     # compute directions
-    ex = -(Uinv[:, :, 0, 0]*v.x + Uinv[:, :, 0, 1]*v.y)
-    ey = -(Uinv[:, :, 1, 0]*v.x + Uinv[:, :, 1, 1]*v.y)
+    ex = -(vgt_inv[:, :, 0, 0]*v.x + vgt_inv[:, :, 0, 1]*v.y)
+    ey = -(vgt_inv[:, :, 1, 0]*v.x + vgt_inv[:, :, 1, 1]*v.y)
 
     # normalize
     enorm = np.sqrt(ex**2 + ey**2)

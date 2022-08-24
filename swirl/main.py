@@ -631,7 +631,6 @@ class SWIRL:
         """
         # Print status
         if self.verbose:
-            print('---')
             print('---------------------------------------------------------')
             print('--- Starting identification ')
             print('---------------------------------------------------------')
@@ -697,6 +696,9 @@ class SWIRL:
         data_group.create_dataset("centers", data=self.centers)
         data_group.create_dataset("orientations", data=self.orientations)
         data_group.create_dataset("gevc_map", data=self.gevc_map)
+        data_group.create_dataset("rho", data=self.rho)
+        data_group.create_dataset("delta", data=self.delta)
+        data_group.create_dataset("gamma", data=self.gamma)
         data_group.create_dataset("rortex", data=self.rortex)
         # Create params dataset
         params_group = hf.create_group('params')
@@ -708,7 +710,7 @@ class SWIRL:
         for n in np.arange(self.n_vortices):
             vortex_group = hf.create_group('vortices/'+str(n).zfill(5))
             # Save radius, center, orientation, cells, evc, rortex
-            vortex_group.create_dataset("r", (1,), data=self[n].radius)
+            vortex_group.create_dataset("radius", (1,), data=self[n].radius)
             vortex_group.create_dataset("center", (2,), data=self[n].center)
             vortex_group.create_dataset("orientation", (1,), data=self[n].orientation)
             vortex_group.create_dataset("all_cells" , data=self[n].all_cells)
