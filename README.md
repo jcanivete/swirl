@@ -1,32 +1,36 @@
 ```                         
-    _/_/_/  _/          _/  _/   _/_/_/    _/      
-  _/         _/        _/   _/   _/    _/  _/      
-    _/_/      _/      _/    _/   _/_/_/    _/      
-        _/     _/ _/ _/     _/   _/  _/    _/      
-  _/_/_/        _/  _/      _/   _/   _/   _/_/_/  
+    _/_/_/  _/          _/  _/   _/_/_/    _/
+  _/         _/        _/   _/   _/    _/  _/
+    _/_/      _/      _/    _/   _/_/_/    _/
+        _/     _/ _/ _/     _/   _/  _/    _/
+  _/_/_/        _/  _/      _/   _/   _/   _/_/_/
 
 
-              IRSOL, 11.04.2022                      
+             (c) IRSOL, 11.04.2022
 
-```                                                     
-Author: *José Roberto Canivete Cuissa*              
-Email: *jcanivete@ics.uzh.ch*                       
-
-
+Author: *José Roberto Canivete Cuissa*
+Email: *jcanivete@ics.uzh.ch*
+```                                                 
 
 # SWIRL code
-The SWirl Identification by Rotation centers Localization (`SWIRL`) is an automated vortex identification algorithm written in python based on the _Estimated Vortex Center_ (EVC) method (*Canivete Cuissa & Steiner, 2022, A&A (submitted)*). The only required inputs are a two-dimensional velocity time istance defined on a Cartesian grid, and the grid cell size. It returns the list of the identified vortical structures.
+The SWirl Identification by Rotation centers Localization (*SWIRL*) is an automated vortex identification algorithm written in python and based on the _Estimated Vortex Center_ (EVC) method (*Canivete Cuissa & Steiner, 2022, A&A (submitted)*). 
+Given a two-dimensional velocity field defined on a Cartesian grid and the grid cell size in physical units, the SWIRL code returns a list with the identified vortical structures and their main properties.
 
-# _Work in progress_
-This repository is still work in progress. Code examples and tests will be added soon, as well as improvements concerning the handling of inputs and outputs of the code. For any question, please contact me at *jcanivete@ics.uzh.ch*.
+# Table of contents
+- [Abstract](#abstract)
+- [Dependencies](#dependencies)
+- [How to install](#how-to-install)
+- [How to run](#how-to-run)
+- [Parameters](#parameters)
+- [References](#references)
 
 # Abstract
 Vortices are one of the fundamental features of turbulent fluid dynamics, yet it is extremely difficult to accurately and automatically identify vortical motions in, for example, simulations and observations of turbulent flows. We propose a new method for an accurate and reliable identification of vortices which requires the knowledge of the velocity field. The advantage of this method is that it accounts for both the local and global properties of the flow, which makes it robust to noise and reliable even in highly turbulent scenarios.  
 In our method, vortical motions are identified in the given velocity field by clustering estimated centers of rotation computed from grid points where the flow is characterized by some degree of curvature (rotation). The estimated center points are dubbed _estimated vortex center_ (EVC) points. Since a vortex can be intuitively defined as a collection of fluid particles coherently rotating around a common axis, clusters of EVC points will appear in the center of coherently rotating flows.  
 To accurately estimate EVC points, and therefore allow for a robust identification of vortices, we employ the Rortex mathematical criterion ([Tian et al., 2018](https://ui.adsabs.harvard.edu/abs/2018JFM...849..312T/abstract); [Liu et al., 2018](https://ui.adsabs.harvard.edu/abs/2018PhFl...30c5103L/abstract)) and the properties of the input velocity field. The clustering is then performed with a grid- and vortex-adapted version of the _Clustering by fast search and find of density peaks_ (CFSFDP) algorithm ([Rodriguez and Laio, 2014](https://ui.adsabs.harvard.edu/abs/2014Sci...344.1492R/abstract)).  
-The algorithm is implemented in the python `SWIRL` code and it has been tested on (noisy) artificial vortex flows and on (magneto-)hydrodynamical and turbulent numerical simulations with excellent results. If you are interested in using the algorithm, feel free to contact me at *jcanivete@ics.uzh.ch*.
+The algorithm is implemented in the `SWIRL` code and it has been tested on (noisy) artificial vortex flows and on (magneto-)hydrodynamical and turbulent numerical simulations with excellent results. More details on the EVC method and on the implementation of the code can be found in [Canivete Cuissa & Steiner, 2022, A&A (submitted)](...).
 
-If you use the SWIRL code in your research, please cite the paper [Canivete Cuissa & Steiner, 2022, A&A (submitted)](...), where more details about the method and the code can be found.
+If you find the SWIRL code useful in your research, we would really appreciate if you could cite the paper [Canivete Cuissa & Steiner, 2022, A&A (submitted)](...) in your published work.
 
 # Dependencies
 The `SWIRL` code makes use of the following python libraries:
