@@ -9,12 +9,12 @@
              (c) IRSOL, 11.04.2022
 
 Author: *José Roberto Canivete Cuissa*
-Email: *jcanivete@ics.uzh.ch*
+Email: *jose.canivete@irsol.usi.ch*
 ``` 
 ----
 
 # SWIRL code
-The SWirl Identification by Rotation centers Localization (*SWIRL*) is an automated vortex identification algorithm written in python and based on the _Estimated Vortex Center_ (EVC) method (*Canivete Cuissa & Steiner, 2022, A&A (submitted)*). 
+The SWirl Identification by Rotation centers Localization (SWIRL) is an automated vortex identification algorithm written in python and based on the _Estimated Vortex Center_ (EVC) method [Canivete Cuissa & Steiner, 2022](#references). 
 Given a two-dimensional velocity field defined on a Cartesian grid and the grid cell size in physical units, the SWIRL code returns a list with the identified vortical structures and their main properties.
 
 ----
@@ -40,7 +40,7 @@ The algorithm is implemented in the SWIRL code and it has been tested on (noisy)
 ----
 
 ## Dependencies
-The SWIRL code makes use of the following python libraries:
+The SWIRL code requires Python 3 and makes use of the following Python libraries:
 - numpy      (tested with _v. 1.21.6_)
 - scipy      (tested with _v. 1.4.1_)
 - h5py       (tested with _v. 2.10.0_)
