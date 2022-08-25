@@ -509,14 +509,17 @@ class Identification:
             if self._rortex is None:
                 self.rortex
             # Call external function
-            self._gevc_map, self._data_cells = compute_evcmap(self._rortex,
-                                                              self._vgt,
-                                                              self.v,
-                                                              self.grid_dx
-                                                              )
+            (self._gevc_map,
+             self._data_cells,
+             self._noise_gevc_map) = compute_evcmap(self._rortex,
+                                                    self._vgt,
+                                                    self.v,
+                                                    self.grid_dx
+                                                    )
             # Timing
             t_total = timings(t_start)
             self.timings['EVC map'] = t_total
+            self.noise = self._noise_gevc_map
         return self._gevc_map
     # -----------------------------------
 
@@ -592,18 +595,20 @@ class Identification:
             raise RuntimeError('Detection: Clustering has not been done.')
         # Call detection routine for vortex identification
         if self._cluster_id.size > 0:
-            self._vortices_list, self.noise = detection(self._data_cells,
-                                                        self._gevc_map,
-                                                        self._cluster_id,
-                                                        self._peaks_ind,
-                                                        self.params['cluster_fast'],
-                                                        self.params['noise_param'],
-                                                        self.params['kink_param'],
-                                                        self.grid_dx
-                                                        )
+            (self._vortices_list,
+             self._noise_detection) = detection(self._data_cells,
+                                                self._gevc_map,
+                                                self._cluster_id,
+                                                self._peaks_ind,
+                                                self.params['cluster_fast'],
+                                                self.params['noise_param'],
+                                                self.params['kink_param'],
+                                                self.grid_dx
+                                                )
+            self.noise = np.concatenate((self._noise_gevc_map, self._noise_detection[:2,:]), axis=1)
         else:
             self._vortices_list = []
-            self.noise = []
+            self._noise_detection = []
         # Store main quantities
         self.radii = np.array([v.radius for v in self._vortices_list])
         self.centers = np.array([v.center for v in self._vortices_list])

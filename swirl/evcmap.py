@@ -39,7 +39,9 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
     dataCells : list of arrays
         array containing original coordinates, EVC coordinates,
         and criteria values.
-
+    noise : array
+        An array containing the cells identified as noise because isolated
+        in the G-EVC map.
     Raises
     ------
     """
@@ -52,6 +54,10 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
 
     # Initialize the cardinality of EVC map
     S = np.zeros((nx, ny))
+
+    # Initialize noise
+    noise = np.zeros((2,0))
+    print('0.\n',noise)
 
     # loop over stencils:
     for n in np.arange(len(rortex)):
@@ -82,9 +88,10 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         yc = np.where(yc < 0., -1., yc)
 
         # Flag ecvs where criterion is null
-        xc = np.where(rortex[n] == 0., -1., xc)
-        yc = np.where(rortex[n] == 0., -1., yc)
-
+        xc = np.where(rortex[n] == 0., -2., xc)
+        yc = np.where(rortex[n] == 0., -2., yc)
+        print(xc)
+        print(yc)
         # Flatten all quantities
         x = x.flatten()
         y = y.flatten()
@@ -93,8 +100,15 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         r = r.flatten()
         Xi = rortex[n].flatten()
 
-        # Remove the flagged points
-        mask = np.where(xc == -1.)
+        # Remove the flagged points (where R=0)
+        mask = np.where(xc == -2.)
+        xc = np.delete(xc, mask)
+        yc = np.delete(yc, mask)
+        x = np.delete(x, mask)
+        y = np.delete(y, mask)
+        r = np.delete(r, mask)
+        Xi = np.delete(Xi, mask)
+        mask = np.where(yc == -2.)
         xc = np.delete(xc, mask)
         yc = np.delete(yc, mask)
         x = np.delete(x, mask)
@@ -102,13 +116,32 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         r = np.delete(r, mask)
         Xi = np.delete(Xi, mask)
 
-        mask = np.where(yc == -1.)
+        # Remove the flagged points
+        mask = np.where(xc == -1.)
+        noise_n = np.array((x[mask],
+                            y[mask]
+                            ))
+        noise = np.concatenate((noise, noise_n), axis=1)
         xc = np.delete(xc, mask)
         yc = np.delete(yc, mask)
         x = np.delete(x, mask)
         y = np.delete(y, mask)
         r = np.delete(r, mask)
         Xi = np.delete(Xi, mask)
+        print('1.\n',noise)
+
+        mask = np.where(yc == -1.)
+        noise_n = np.array((x[mask],
+                            y[mask]
+                            ))
+        noise = np.concatenate((noise, noise_n), axis=1)
+        xc = np.delete(xc, mask)
+        yc = np.delete(yc, mask)
+        x = np.delete(x, mask)
+        y = np.delete(y, mask)
+        r = np.delete(r, mask)
+        Xi = np.delete(Xi, mask)
+        print('2.\n',noise)
 
         # Define coordinate of cell centers and weights
         xcell = np.round(xc)
@@ -121,6 +154,11 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
 
         # Remove single counters
         mask = np.where(np.abs(Si) < 2)
+        noise_n = np.array((mask[0], 
+                            mask[1]
+                            ))
+        noise = np.concatenate((noise, noise_n), axis=1)
+        print('3.\n',noise)
         Si[mask] = 0.
 
         # Add to cardinality map
@@ -166,7 +204,7 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
     # Make array
     dataCells = np.hstack(dataCells)
 
-    return M, dataCells
+    return M, dataCells, noise
 # ---------------------
 
 
