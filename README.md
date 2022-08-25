@@ -110,41 +110,41 @@ which will save all the information relative to the identification process in a 
 
 ## Parameters
 The `Identification` class accepts a number of different parameters that one might need to tweak in order to optimize the results. These parameters must be given in a parameter file, which format is shown in the file _default_swirl.param_. If a parameter file is not given as an input in the initialization of the `Identification` class, or if some parameters are omitted, the SWIRL code will use the default values (i.e. the ones shown in the _default_swirl.param_ file). The parameters are defined as follows:
-- stencils [list] = [1]  
+- `stencils` [list] = [1]  
     A list of integers that correspond the stencils of grid cells used for the computation of numerical derivatives. 
-- swirlstr_params [list] = [0., 0., 0.]  
+- `swirlstr_params` [list] = [0., 0., 0.]  
     The parameters used in the computation of the swirling strength. The first one is the threshold value $\epsilon_{\lambda}$, 
     we suggest this value to be always $0.0$. The second and thirs values correspond to the $\kappa_{\zeta}$ and $\delta_{\zeta}$ 
     parameters used to compute the enhanced swirling strength. We suggest these values to be either $0.0$ or around $1.0$.  
-- dc_param [float] = 3.  
+- `dc_param` [float] = 3.  
     Parameter used to compute the critical distance used in the 
     clustering algorithm. Depending on the value of the dc_adaptive 
     parameter, it can represent the percentual number of data points that,
     in average, are considered as neighbours, i.e. inside the critical 
     distance (True), or to define the critical distance dc = dc_param in units
     of grid cells (False).
-- dc_adaptive [boolean] = True  
+- `dc_adaptive` [boolean] = True  
     Option to use the adaptive critical distance evaluation or to use the 
     fixed one based on the value of dc_param.  
-- cluster_fast [boolean] = True  
+- `cluster_fast` [boolean] = True  
     Option to use the grid adapted version of the clustering algorithm, which
     accelerates greatly the computation without sacrificing accuracy. We suggest to keep it True
-- cluster_kernel [string] = Gaussian  
+- `cluster_kernel` [string] = Gaussian  
     Kernel used to compute densities in the clustering algorithm.
     'Gaussian': Gaussian kernel.
     'Heaviside': Heaviside function.
-- cluster_decision [string] = delta-rho  
+- `cluster_decision` [string] = delta-rho  
     The method used to select the cluster centers in the clustering process.
     'delta-rho' : Use the delta and rho criteria to select the cluster centers.
     'gamma' : Use the gamma criterion to select the cluster centers.
-- cluster_params [list] = [1.0, 0.5, 2.0]  
+- `cluster_params` [list] = [1.0, 0.5, 2.0]  
     List of parameters for the selection of cluster centers in the clustering
     process. The list must contain three entries, which correspond to the parameters 
     $delta_p$, $rho_p$, $gamma_p$.
-- noise_param [float] = 1.0  
+- `noise_param` [float] = 1.0  
     Parameter to remove noisy cells from the identification process. It correspond to the parameter
     $r_p$. We recommend values $\gtrsim 1.0$.
-- kink_param [float] = 1.0  
+- `kink_param` [float] = 1.0  
     Parameter to remove 'non-spiraling' coherent curvatures identified as vortices. 
     It also corresponds to the parameter $r_p$. We recommend values $\sim 1.0$.
     
