@@ -154,8 +154,7 @@ Finally, one can also select the option `verbose=False` in the initialization of
 
 ## References
 [Canivete Cuissa, J. R., Steiner, O., 2022, A&A (submitted)](...)  
-[Tian, S., Gao, Y., Dong, X., & Liu, C. 2018, Journal of Fluid Mechanics, 849, 312](https://ui.adsabs.harvard.edu/abs/2018JFM...849..312T/abstract)  
 [Liu, C., Gao, Y., Tian, S., & Dong, X. 2018, Physics of Fluids, 30, 035103](https://ui.adsabs.harvard.edu/abs/2018PhFl...30c5103L/abstract)  
 [Rodriguez, A. & Laio, A. 2014, Science, 344, 1492](https://ui.adsabs.harvard.edu/abs/2014Sci...344.1492R/abstract)  
-
+[Tian, S., Gao, Y., Dong, X., & Liu, C. 2018, Journal of Fluid Mechanics, 849, 312](https://ui.adsabs.harvard.edu/abs/2018JFM...849..312T/abstract)
 ----
