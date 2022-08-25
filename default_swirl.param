@@ -9,9 +9,9 @@ dc_param : 3.
 dc_adaptive : True
 cluster_fast : True
 cluster_kernel : Gaussian
-cluster_decision : gamma
-cluster_params : [1.0, 0.5, 15.0]
+cluster_decision : delta-rho
+cluster_params : [1.0, 0.5, 2.0]
 
 [Noise]
-noise_param : 1.5
+noise_param : 1.0
 kink_param : 1.0
