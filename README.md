@@ -73,7 +73,7 @@ Given a two-dimensional velocity field, `vx` and `vy`, and the size of the grid 
 ```
 
 > Important!   
-> The spatial units of the velocity field and of the grid cell sizes must be the same, otherwise the identification algorithm won't work correctly. For > > > example, if the velocity field is given in units of $cm/s$, then the grid cells sizes must be given in units of $cm$.  
+> The spatial units of the velocity field and of the grid cell sizes must be the same, otherwise the identification algorithm won't work correctly. For example, if the velocity field is given in units of $cm/s$, then the grid cells sizes must be given in units of $cm$.  
 
 Once the object has been initialized, one can run the algorithm with
 ```
