@@ -47,7 +47,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 # Imports
-from .main import SWIRL
+from .main import Identification
 from .vorticity import compute_vorticity
 from .swirlingstrength import compute_swirlingstrength
 from .rortex import compute_rortex

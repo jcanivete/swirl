@@ -1,6 +1,6 @@
 """
 SWIRL Code
-    swirl_test.py
+    main.py
 
 José Roberto Canivete Cuissa
 IRSOL, 10.02.2021
@@ -8,7 +8,7 @@ IRSOL, 10.02.2021
 ----------------
 
 This code contains the main structure of the SWIRL code,
-that is the SWIRL class.
+that is the SWIRL Identification class.
 """
 # Imports
 from dataclasses import dataclass
@@ -27,10 +27,10 @@ from .vortex import detection
 # ---------------------------
 
 
-class SWIRL:
+class Identification:
     """
     Given a two-dimensional velocity field and the size of the
-    grid cells, the SWIRL class allows to compute different
+    grid cells, the Identification class allows to compute different
     mathematical criteria and to perform an automated identification
     of vortices following the estimated vortex center (EVC) method.
 
@@ -98,7 +98,7 @@ class SWIRL:
             - Default : 1.0
     
     verbose [optional]: bool
-        Parameter to have a "verbose" report of the SWIRL object and of the
+        Parameter to have a "verbose" report of the Identification object and of the
         identification process.
         - Default : True
 
@@ -187,7 +187,7 @@ class SWIRL:
             values of the parameters will be used.
             Default : ''
         verbose [optional]: bool
-            Parameter to have a "verbose" report of the SWIRL object and of the
+            Parameter to have a "verbose" report of the Identification object and of the
             identification process.
             Default : True
 
@@ -315,9 +315,9 @@ class SWIRL:
         ------
         """
         if self._vortices_list:
-            return 'SWIRL Class object. Vortices identified : '+str(self.n_vortices)
+            return 'SWIRL Identification Class object. Vortices identified : '+str(self.n_vortices)
         else:
-            return 'SWIRL Class object. Identification not yet performed'
+            return 'SWIRL Identification Class object. Identification not yet performed'
     
     def __str__(self):
         """
@@ -352,7 +352,7 @@ class SWIRL:
 
     def __getitem__(self, i):
         """
-        Magic method for indexation of SWIRL objects. It returns the vortex in the 
+        Magic method for indexation of Identification objects. It returns the vortex in the 
         vortex list 'vortices' with the index i.
 
         Parameters

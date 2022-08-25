@@ -7,7 +7,7 @@ IRSOL, 10.02.2021
 
 ----------------
 
-This code contains simple plotting routines for the SWIRL class.
+This code contains simple plotting routines for the SWIRL Identification class.
 """
 # Imports
 import numpy as np
@@ -22,8 +22,8 @@ def plot_rortex(swirl, f_quiver=6, save=False):
 
     Parameters
     ----------
-    swirl : SWIRL instance
-        the SWIRL class instance to plot
+    swirl : SWIRL Identification instance
+        the SWIRL Identification class instance to plot
     f_quiver : int
         sets the frequency of the quiver plot arrows
     save : bool
@@ -102,8 +102,8 @@ def plot_gevc_map(swirl, f_quiver=6, save=False):
 
     Parameters
     ----------
-    swirl : SWIRL instance
-        the SWIRL class instance to plot
+    swirl : SWIRL Identification instance
+        the SWIRL Identification class instance to plot
     f_quiver : int
         sets the frequency of the quiver plot arrows
     save : bool
@@ -196,8 +196,8 @@ def plot_decision(swirl, save=False):
 
     Parameters
     ----------
-    swirl : SWIRL instance
-        the SWIRL class instance to plot
+    swirl : SWIRL Identification instance
+        the SWIRL Identification class instance to plot
 
     save : bool
         set to true to save a .png version of the plot
@@ -278,8 +278,8 @@ def plot_vortices(swirl, f_quiver=6, save=False):
 
     Parameters
     ----------
-    swirl : SWIRL instance
-        the SWIRL class instance to plot
+    swirl : SWIRL Identification instance
+        the SWIRL Identification class instance to plot
     f_quiver : int
         sets the frequency of the quiver plot arrows
     save : bool

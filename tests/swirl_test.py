@@ -8,12 +8,12 @@ IRSOL, 15.08.2022
 ----------------
 
 Unit test module for testing the implementation of mathematical criteria
-in the SWIRL code.
+in the SWIRL Identification code.
 """
 # Imports
 import unittest
 import numpy as np
-from swirl import SWIRL
+import swirl
 
 
 class CriteriaTests(unittest.TestCase):
@@ -35,19 +35,19 @@ class CriteriaTests(unittest.TestCase):
         sstr_true = np.zeros((nx, ny))
         vort_true = np.zeros((nx, ny))
         rort_true = np.zeros((nx, ny))
-        # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        # SWIRL Identification instance
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Computing quantities
-        swirl.vorticity
-        swirl.swirling_str
-        swirl.rortex
+        swirls.vorticity
+        swirls.swirling_str
+        swirls.rortex
         # Testing
-        np.testing.assert_array_equal(swirl.swirling_str[0], sstr_true)
-        np.testing.assert_array_equal(swirl.vorticity[0], vort_true)
-        np.testing.assert_array_equal(swirl.rortex[0], rort_true)
+        np.testing.assert_array_equal(swirls.swirling_str[0], sstr_true)
+        np.testing.assert_array_equal(swirls.vorticity[0], vort_true)
+        np.testing.assert_array_equal(swirls.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -67,18 +67,18 @@ class CriteriaTests(unittest.TestCase):
         vort_true = np.zeros((nx, ny))
         rort_true = np.zeros((nx, ny))
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Computing quantities
-        swirl.vorticity
-        swirl.swirling_str
-        swirl.rortex
+        swirls.vorticity
+        swirls.swirling_str
+        swirls.rortex
         # Testing
-        np.testing.assert_array_equal(swirl.swirling_str[0], sstr_true)
-        np.testing.assert_array_equal(swirl.vorticity[0], vort_true)
-        np.testing.assert_array_equal(swirl.rortex[0], rort_true)
+        np.testing.assert_array_equal(swirls.swirling_str[0], sstr_true)
+        np.testing.assert_array_equal(swirls.vorticity[0], vort_true)
+        np.testing.assert_array_equal(swirls.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -103,18 +103,18 @@ class CriteriaTests(unittest.TestCase):
         sstr_true = np.zeros((nx, ny))
         rort_true = np.zeros((nx, ny))
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Computing quantities
-        swirl.vorticity
-        swirl.swirling_str
-        swirl.rortex
+        swirls.vorticity
+        swirls.swirling_str
+        swirls.rortex
         # Testing
-        np.testing.assert_array_equal(swirl.swirling_str[0], sstr_true)
-        np.testing.assert_array_equal(swirl.vorticity[0], vort_true)
-        np.testing.assert_array_equal(swirl.rortex[0], rort_true)
+        np.testing.assert_array_equal(swirls.swirling_str[0], sstr_true)
+        np.testing.assert_array_equal(swirls.vorticity[0], vort_true)
+        np.testing.assert_array_equal(swirls.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -142,18 +142,18 @@ class CriteriaTests(unittest.TestCase):
         sstr_true = vort_true
         rort_true = vort_true
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Computing quantities
-        swirl.vorticity
-        swirl.swirling_str
-        swirl.rortex
+        swirls.vorticity
+        swirls.swirling_str
+        swirls.rortex
         # Testing
-        np.testing.assert_array_almost_equal(swirl.swirling_str[0], sstr_true)
-        np.testing.assert_array_almost_equal(swirl.vorticity[0], vort_true)
-        np.testing.assert_array_almost_equal(swirl.rortex[0], rort_true)
+        np.testing.assert_array_almost_equal(swirls.swirling_str[0], sstr_true)
+        np.testing.assert_array_almost_equal(swirls.vorticity[0], vort_true)
+        np.testing.assert_array_almost_equal(swirls.rortex[0], rort_true)
 
     # ----------------------------------------------
     @staticmethod
@@ -193,18 +193,18 @@ class CriteriaTests(unittest.TestCase):
         sstr_true = true_arrays[1]
         rort_true = true_arrays[2]
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx=[dx, dy],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx=[dx, dy],
+                                      verbose=False
+                                      )
         # Computing quantities
-        swirl.vorticity
-        swirl.swirling_str
-        swirl.rortex
+        swirls.vorticity
+        swirls.swirling_str
+        swirls.rortex
         # Testing
-        np.testing.assert_array_almost_equal(swirl.swirling_str[0], sstr_true)
-        np.testing.assert_array_almost_equal(swirl.vorticity[0], vort_true)
-        np.testing.assert_array_almost_equal(swirl.rortex[0], rort_true)
+        np.testing.assert_array_almost_equal(swirls.swirling_str[0], sstr_true)
+        np.testing.assert_array_almost_equal(swirls.vorticity[0], vort_true)
+        np.testing.assert_array_almost_equal(swirls.rortex[0], rort_true)
 
 # ----------------------------------------------
 
@@ -226,14 +226,14 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 0
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
     # ----------------------------------------------
     def test_const_velocity(self):
@@ -249,14 +249,14 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 0
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
     # ----------------------------------------------
     def test_shear_flow(self):
@@ -276,14 +276,14 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 0
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
     # ----------------------------------------------
     def test_rotational_vortex(self):
@@ -306,14 +306,14 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 1
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
     # ----------------------------------------------
     def test_lamb_oseen_vortex(self):
@@ -347,14 +347,14 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 1
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx=[dx, dy],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx=[dx, dy],
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
     # ----------------------------------------------
     def test_double_lamb_oseen_vortex(self):
@@ -372,15 +372,15 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 2
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      param_file=data_dir+'lamb_oseen.param',
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      param_file=data_dir+'lamb_oseen.param',
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
     # ----------------------------------------------
     def test_multiple_vortices(self):
@@ -395,15 +395,15 @@ class IdentificationTests(unittest.TestCase):
         # Expected results
         n_vortices_true = 9
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx=[dx, dx],
-                      param_file=data_dir+'multiple_vortices.param',
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx=[dx, dx],
+                                      param_file=data_dir+'multiple_vortices.param',
+                                      verbose=False
+                                      )
         # Run algorithm
-        swirl.run()
+        swirls.run()
         # Testing
-        self.assertEqual(len(swirl), n_vortices_true)
+        self.assertEqual(len(swirls), n_vortices_true)
 
 # ----------------------------------------------
 
@@ -430,13 +430,13 @@ class EVCMapTests(unittest.TestCase):
         # Expected results
         evc_map_true = np.array([[5.], [5.], [81.]])
         # SWIRL instance
-        swirl = SWIRL(v=[vx, vy],
-                      grid_dx = [1.0, 1.0],
-                      verbose=False
-                      )
+        swirls = swirl.Identification(v=[vx, vy],
+                                      grid_dx = [1.0, 1.0],
+                                      verbose=False
+                                      )
         # Testing
-        swirl.run()
-        np.testing.assert_array_equal(swirl.gevc_map, evc_map_true)
+        swirls.run()
+        np.testing.assert_array_equal(swirls.gevc_map, evc_map_true)
 
 
 # ---------------------------------------------------------

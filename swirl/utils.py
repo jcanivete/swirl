@@ -164,7 +164,7 @@ def read_params(param_file = ''):
     """
     This routine reads a parameter file with the configparams module
     and returns a dictionary with all the parameters needed for the 
-    SWIRL class. If no parameter file is given, then it returns the 
+    SWIRL Identification class. If no parameter file is given, then it returns the 
     default values. 
     
     Parameters
