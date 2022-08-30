@@ -57,13 +57,20 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
 
     # Initialize noise
     noise = np.zeros((2,0))
-    print('0.\n',noise)
+    #print('0.\n',noise)
 
     # loop over stencils:
     for n in np.arange(len(rortex)):
 
         # build grids
         x, y = np.meshgrid(np.arange(0, nx), np.arange(0, ny), indexing='ij')
+
+        
+        # find grid points where rortex != 0 (i.e where curvature is present)
+        #curvature_mask = np.where(np.abs(rortex[n]) > 0.0)
+        #x = curvature_mask[0]
+        #y = curvature_mask[1]
+        
 
         # compute estimated radius (in units)
         r = radius(rortex[n], v)
@@ -79,7 +86,146 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         # Build center maps
         xc = x + px
         yc = y + py
+        # xc = x + px[curvature_mask]
+        # yc = y + py[curvature_mask]
 
+        
+
+        # # Flatten lists of coordinates
+        x = x.flatten()
+        y = y.flatten()
+        xc = xc.flatten()
+        yc = yc.flatten()
+        r = r.flatten()
+        Xi = rortex[n].flatten()
+
+        # Remove evcs outside of domain
+        xc = np.where(xc > nx, -1., xc)
+        xc = np.where(xc < 0., -1., xc)
+        yc = np.where(yc > ny, -1., yc)
+        yc = np.where(yc < 0., -1., yc)
+        xc = np.where(rortex[n].ravel() == 0., -2., xc)
+        yc = np.where(rortex[n].ravel() == 0., -2., yc)
+
+        outside_mask = np.where(xc == -2.0)
+        x = np.delete(x, outside_mask)
+        y = np.delete(y, outside_mask)
+        xc = np.delete(xc, outside_mask)
+        yc = np.delete(yc, outside_mask)
+        r = np.delete(r, outside_mask)
+        Xi = np.delete(Xi, outside_mask)
+        outside_mask = np.where(yc == -2.0)
+        x = np.delete(x, outside_mask)
+        y = np.delete(y, outside_mask)
+        xc = np.delete(xc, outside_mask)
+        yc = np.delete(yc, outside_mask)
+        r = np.delete(r, outside_mask)
+        Xi = np.delete(Xi, outside_mask)
+
+        outside_mask = np.where(xc == -1.0)
+        noise_n = np.array([x[outside_mask],y[outside_mask]])
+        noise = np.concatenate((noise, noise_n), axis=1)
+        x = np.delete(x, outside_mask)
+        y = np.delete(y, outside_mask)
+        xc = np.delete(xc, outside_mask)
+        yc = np.delete(yc, outside_mask)
+        r = np.delete(r, outside_mask)
+        Xi = np.delete(Xi, outside_mask)
+        outside_mask = np.where(yc == -1.0)
+        noise_n = np.array([x[outside_mask],y[outside_mask]])
+        noise = np.concatenate((noise, noise_n), axis=1)
+        x = np.delete(x, outside_mask)
+        y = np.delete(y, outside_mask)
+        xc = np.delete(xc, outside_mask)
+        yc = np.delete(yc, outside_mask)
+        r = np.delete(r, outside_mask)
+        Xi = np.delete(Xi, outside_mask)
+
+        # Compute GEVC map
+        grid_xc = np.round(xc)
+        grid_yc = np.round(yc)
+        weight = np.sign(Xi)
+        # Compute number of points per cell with np.histogram
+        Si, _, _ = np.histogram2d(grid_xc, grid_yc, weights=weight, bins=[
+                                  np.arange(0, nx+1), np.arange(0, ny+1)])
+        # Remove single counters
+        single_gevcs = np.where(np.abs(Si) == 1.0)
+        Si[single_gevcs] = 0.
+
+        grid_single = single_gevcs[0] + 1j*single_gevcs[1]
+        grid_c = grid_xc + 1j*grid_yc
+        single_mask = np.where(np.in1d(grid_c, grid_single))[0]
+        # print(single_mask)
+        noise_n = np.array([x[single_mask], y[single_mask]])
+        noise = np.concatenate((noise, noise_n), axis=1)
+        x = np.delete(x, single_mask)
+        y = np.delete(y, single_mask)
+        xc = np.delete(xc, single_mask)
+        yc = np.delete(yc, single_mask)
+        r = np.delete(r, single_mask)
+        Xi = np.delete(Xi, single_mask)
+        
+
+        # # Remove evcs outside of domain an place x,y coordinates
+        # # into noise
+        # outside_mask = np.where(xc > nx)
+        # noise_n = np.array([x[outside_mask],y[outside_mask]])
+        # noise = np.concatenate((noise, noise_n), axis=1)
+        # x = np.delete(x, outside_mask)
+        # y = np.delete(y, outside_mask)
+        # xc = np.delete(xc, outside_mask)
+        # yc = np.delete(yc, outside_mask)
+
+
+        # outside_mask = np.where(xc < 0.)
+        # noise_n = np.array([x[outside_mask],y[outside_mask]])
+        # noise = np.concatenate((noise, noise_n), axis=1)
+        # x = np.delete(x, outside_mask)
+        # y = np.delete(y, outside_mask)
+        # xc = np.delete(xc, outside_mask)
+        # yc = np.delete(yc, outside_mask)
+
+
+        # outside_mask = np.where(yc > ny)
+        # noise_n = np.array([x[outside_mask],y[outside_mask]])
+        # noise = np.concatenate((noise, noise_n), axis=1)
+        # x = np.delete(x, outside_mask)
+        # y = np.delete(y, outside_mask)
+        # xc = np.delete(xc, outside_mask)
+        # yc = np.delete(yc, outside_mask)
+
+
+        # outside_mask = np.where(yc < 0.)
+        # noise_n = np.array([x[outside_mask],y[outside_mask]])
+        # noise = np.concatenate((noise, noise_n), axis=1)
+        # x = np.delete(x, outside_mask)
+        # y = np.delete(y, outside_mask)
+        # xc = np.delete(xc, outside_mask)
+        # yc = np.delete(yc, outside_mask)
+
+        # # Compute GEVC map
+        # grid_xc = np.array(xc, dtype=int)
+        # grid_yc = np.array(yc, dtype=int)
+        # rortex_c = rortex[n][grid_xc, grid_yc]
+        # weight = np.sign(rortex_c)
+        # # Compute number of points per cell with np.histogram
+        # Si, _, _ = np.histogram2d(grid_xc, grid_yc, weights=weight, bins=[
+        #                           np.arange(0, nx+1), np.arange(0, ny+1)])
+        # # Remove single counters
+        # single_gevcs = np.where(np.abs(Si) == 1.0)
+        # grid_single = single_gevcs[0] + 1j*single_gevcs[1]
+        # grid_c = grid_xc + 1j*grid_yc
+        # single_mask = np.where(np.in1d(grid_c, grid_single))[0]
+        # #print(single_mask)
+        # noise_n = np.array([x[single_mask], y[single_mask]])
+        # noise = np.concatenate((noise, noise_n), axis=1)
+        # x = np.delete(x, single_mask)
+        # y = np.delete(y, single_mask)
+        # xc = np.delete(xc, single_mask)
+        # yc = np.delete(yc, single_mask)
+        # Si[single_gevcs] = 0.
+
+        """
         # Treat outside points
         # Flag ecvs outside of domain
         xc = np.where(xc > nx, -1., xc)
@@ -90,8 +236,8 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         # Flag ecvs where criterion is null
         xc = np.where(rortex[n] == 0., -2., xc)
         yc = np.where(rortex[n] == 0., -2., yc)
-        print(xc)
-        print(yc)
+        #print(xc)
+        #print(yc)
         # Flatten all quantities
         x = x.flatten()
         y = y.flatten()
@@ -128,7 +274,7 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         y = np.delete(y, mask)
         r = np.delete(r, mask)
         Xi = np.delete(Xi, mask)
-        print('1.\n',noise)
+        ##print('1.\n',noise)
 
         mask = np.where(yc == -1.)
         noise_n = np.array((x[mask],
@@ -141,8 +287,8 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
         y = np.delete(y, mask)
         r = np.delete(r, mask)
         Xi = np.delete(Xi, mask)
-        print('2.\n',noise)
-
+        #print('2.\n',noise)
+        
         # Define coordinate of cell centers and weights
         xcell = np.round(xc)
         ycell = np.round(yc)
@@ -153,19 +299,28 @@ def compute_evcmap(rortex, vgt, v, grid_dx):
                                   np.arange(0, nx+1), np.arange(0, ny+1)])
 
         # Remove single counters
-        mask = np.where(np.abs(Si) < 2)
+        mask = np.where(np.abs(Si) < 2.0)
         noise_n = np.array((mask[0], 
                             mask[1]
                             ))
-        noise = np.concatenate((noise, noise_n), axis=1)
-        print('3.\n',noise)
+        #noise = np.concatenate((noise, noise_n), axis=1)
+        #print('3.\n',noise)
         Si[mask] = 0.
+        """
+        
 
         # Add to cardinality map
         S = S + Si
 
         # Fill dataCells
         dataCells_n = np.zeros((7, xc.shape[0]))
+
+        
+        # grid_x = np.array(x, dtype=int)
+        # grid_y = np.array(y, dtype=int)
+        # Xi = rortex[n][grid_x, grid_y]
+        # r = r[grid_x, grid_y]
+        
 
         dataCells_n[0] = xc  # EVC coord x
         dataCells_n[1] = yc  # EVC coord y

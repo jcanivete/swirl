@@ -605,7 +605,10 @@ class Identification:
                                                 self.params['kink_param'],
                                                 self.grid_dx
                                                 )
-            self.noise = np.concatenate((self._noise_gevc_map, self._noise_detection[:2,:]), axis=1)
+            if np.array(self._noise_detection).size > 0:
+                self.noise = np.concatenate((self._noise_gevc_map, self._noise_detection[2:4,:]), axis=1)
+            else:
+                self.noise = self._noise_gevc_map
         else:
             self._vortices_list = []
             self._noise_detection = []

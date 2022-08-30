@@ -308,8 +308,8 @@ def plot_vortices(swirl, f_quiver=6, save=False):
                            sharex=True,
                            sharey=True)
     # Access_Noise
-    noise_x = swirl.noise[2]
-    noise_y = swirl.noise[3]
+    noise_x = swirl.noise[0]
+    noise_y = swirl.noise[1]
     # Colors
     n_detections = len(swirl)
     color_map = cm.get_cmap('PiYG', n_detections)
@@ -336,7 +336,7 @@ def plot_vortices(swirl, f_quiver=6, save=False):
                alpha=0.2,
                label=r'Noise'
                )
-    # Loop over vortices for plotting
+    # # Loop over vortices for plotting
     for vortex in swirl:
         # Scatter Cells
         if vortex.orientation > 0.0:
