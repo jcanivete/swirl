@@ -157,7 +157,7 @@ class Identification:
         Runs the whole identification process based on the parameters
         given as input.
     
-    save(self, file_name)
+    save(self, file_name, data)
         It saves the properties of the identified vortices in a h5py file.
     """
 
@@ -671,7 +671,7 @@ class Identification:
     # -------------------------------------
 
 
-    def save(self, file_name='swirl_vortices'):
+    def save(self, file_name='swirl_vortices', data=[]):
         """
         It saves the properties of the identified vortices in a h5py file.
 
@@ -679,6 +679,8 @@ class Identification:
         ----------
         file_name : string
             The name of the h5py file where the data will be saved.
+        data : list of strings
+            The variables one want to save. If the list is empty, save everything
 
         Returns
         -------
@@ -697,31 +699,46 @@ class Identification:
         hf.attrs.__setitem__("param_file", self.param_file)
         # Create short data datasets
         data_group = hf.create_group('data')
-        data_group.create_dataset("radii", data=self.radii)
-        data_group.create_dataset("centers", data=self.centers)
-        data_group.create_dataset("orientations", data=self.orientations)
-        data_group.create_dataset("gevc_map", data=self.gevc_map)
-        data_group.create_dataset("rho", data=self.rho)
-        data_group.create_dataset("delta", data=self.delta)
-        data_group.create_dataset("gamma", data=self.gamma)
-        data_group.create_dataset("rortex", data=self.rortex)
+        if len(data)==0 or 'radii' in data: 
+            data_group.create_dataset("radii", data=self.radii)
+        if len(data)==0 or 'centers' in data: 
+            data_group.create_dataset("centers", data=self.centers)
+        if len(data)==0 or 'orientations' in data: 
+            data_group.create_dataset("orientations", data=self.orientations)
+        if len(data)==0 or 'gevc_map' in data: 
+            data_group.create_dataset("gevc_map", data=self.gevc_map)
+        if len(data)==0 or 'rho' in data: 
+            data_group.create_dataset("rho", data=self.rho)
+        if len(data)==0 or 'delta' in data: 
+            data_group.create_dataset("delta", data=self.delta)
+        if len(data)==0 or 'gamma' in data: 
+            data_group.create_dataset("gamma", data=self.gamma)
+        if len(data)==0 or 'rortex' in data: 
+            data_group.create_dataset("rortex", data=self.rortex)
         # Create params dataset
-        params_group = hf.create_group('params')
-        params_group.create_dataset('grid_dx', data=np.array([self.grid_dx.x, self.grid_dx.y]))
-        for key in self.params.keys():
-            params_group.create_dataset(key, data=self.params[key])
+        if len(data)==0 or 'params' in data: 
+            params_group = hf.create_group('params')
+            params_group.create_dataset('grid_dx', data=np.array([self.grid_dx.x, self.grid_dx.y]))
+            for key in self.params.keys():
+                params_group.create_dataset(key, data=self.params[key])
         # Create vortices datasets
-        hf.create_group('vortices')
-        for n in np.arange(self.n_vortices):
-            vortex_group = hf.create_group('vortices/'+str(n).zfill(5))
-            # Save radius, center, orientation, cells, evc, rortex
-            vortex_group.create_dataset("radius", (1,), data=self[n].radius)
-            vortex_group.create_dataset("center", (2,), data=self[n].center)
-            vortex_group.create_dataset("orientation", (1,), data=self[n].orientation)
-            vortex_group.create_dataset("all_cells" , data=self[n].all_cells)
-            vortex_group.create_dataset("vortex_cells", data=self[n].vortex_cells)
-            vortex_group.create_dataset("evc", data=self[n].evc)
-            vortex_group.create_dataset("rortex", data=self[n].rortex)
-            vortex_group.create_dataset("cluster_center", data=self[n].cluster_center)
+        if len(data)==0 or 'vortices' in data: 
+            hf.create_group('vortices')
+            for n in np.arange(self.n_vortices):
+                vortex_group = hf.create_group('vortices/'+str(n).zfill(5))
+                # Save radius, center, orientation, cells, evc, rortex
+                vortex_group.create_dataset("radius", (1,), data=self[n].radius)
+                vortex_group.create_dataset("center", (2,), data=self[n].center)
+                vortex_group.create_dataset("orientation", (1,), data=self[n].orientation)
+                if len(data)==0 or 'vortices/all_cells' in data: 
+                    vortex_group.create_dataset("all_cells" , data=self[n].all_cells)
+                if len(data)==0 or 'vortices/vortex_cells' in data: 
+                    vortex_group.create_dataset("vortex_cells", data=self[n].vortex_cells)
+                if len(data)==0 or 'vortices/evc' in data: 
+                    vortex_group.create_dataset("evc", data=self[n].evc)
+                if len(data)==0 or 'vortices/rortex' in data: 
+                    vortex_group.create_dataset("rortex", data=self[n].rortex)
+                if len(data)==0 or 'vortices/cluster_center' in data: 
+                    vortex_group.create_dataset("cluster_center", data=self[n].cluster_center)
         # Close file
         hf.close()
