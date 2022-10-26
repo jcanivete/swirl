@@ -421,7 +421,7 @@ def clustering(d,
         # in the gamma approach
         delta_min = np.min(delta_tot)
         rho_max = np.max(rho_tot)
-        gamma_param = 2.*gamma_opt*delta_min*(rho_max**alpha)
+        gamma_param = gamma_opt*delta_min*(rho_max**alpha)
         peaks = np.where(delta_tot >= gamma_param/(rho_tot**alpha), 1, 0)
 
     # number of peaks (clusters)
