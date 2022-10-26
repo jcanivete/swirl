@@ -8,7 +8,7 @@ swirlstr_params : [0.,0.5,0.5]
 dc_param : 5.
 dc_adaptive : False
 cluster_decision : gamma
-cluster_params : [1.01, 1.0]
+cluster_params : [2.01, 1.0]
 
 [Noise]
 noise_param : 1.2
