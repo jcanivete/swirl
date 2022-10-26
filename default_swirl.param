@@ -10,7 +10,7 @@ dc_adaptive : True
 cluster_fast : True
 cluster_kernel : Gaussian
 cluster_decision : delta-rho
-cluster_params : [1.0, 0.5, 2.0]
+cluster_params : [1.0, 0.5]    # if cluster_decision = gamma, [2.0, 1.0]
 
 [Noise]
 noise_param : 1.0

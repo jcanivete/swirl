@@ -213,9 +213,12 @@ def read_params(param_file = ''):
     params['cluster_decision']=config.get('Clustering',
                                           'cluster_decision',
                                           fallback='delta-rho')
+    cluster_params_fallback = '[1.0, 0.5]'
+    if params['cluster_decision']=='gamma':
+        cluster_params_fallback = '[2.0, 1.0]'   
     params['cluster_params']=ast.literal_eval(config.get('Clustering',
                                                          'cluster_params',
-                                                         fallback='[1.0, 0.5, 2.0]'))
+                                                         fallback=cluster_params_fallback))
     params['noise_param']=config.getfloat('Noise',
                                            'noise_param',
                                            fallback=1.0)
@@ -228,8 +231,8 @@ def read_params(param_file = ''):
         raise ValueError("The 'stencils' parameters must have at least one entry.")
     if len(params['swirlstr_params']) != 3:
         raise ValueError("The 'swirlistr_params' must have exactly three entries: [eps, delta, kappa].")
-    if len(params['cluster_params']) != 3:
-        raise ValueError("The 'cluster_params' must have exactly three entries: [rho_p, delta_p, gamma_p].")
+    if len(params['cluster_params']) != 2:
+        raise ValueError("The 'cluster_params' must have exactly two entries: [rho_p, delta_p] or [gamma_p, alpha].")
     if params['cluster_kernel'] not in ['Gaussian', 'Heaviside']:
         raise ValueError("The 'cluster_kernel' parameter must be either 'Gaussian' (default) or 'Heaviside'.")
     if params['cluster_decision'] not in ['delta-rho', 'gamma']:

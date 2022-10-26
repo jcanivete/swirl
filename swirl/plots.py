@@ -219,24 +219,29 @@ def plot_decision(swirl, save=False):
     gamma = gamma[ind]/np.max(gamma)
     rho = rho[ind]/np.max(rho)
     delta = delta[ind]/np.max(delta)
-    # Selector params
-    delta_opt = swirl.params['cluster_params'][0]
-    rho_opt = swirl.params['cluster_params'][1]
-    gamma_opt = swirl.params['cluster_params'][2]
-    rho_cutoff = np.mean(rho)*rho_opt
-    delta_cutoff = np.std(delta)*delta_opt
-    gamma_cutoff = 2*rho_cutoff*delta_cutoff
-    gamma_cutoff = 2*gamma_opt*np.min(delta)*np.max(rho)
+    
 
     # Top plot
     # Scatter
     axes[0].scatter(rho, delta, marker='o', color='gray', s=10)
     # Thresholds
-    axes[0].axvline(rho_cutoff, linestyle=':', linewidth=1.0, color='orange')
-    axes[0].axhline(delta_cutoff, linestyle=':', linewidth=1.0, color='orange')
-    xgamma = np.linspace(0.001, 1, 500)
-    ygamma = gamma_cutoff/xgamma
-    axes[0].plot(xgamma, ygamma, linestyle='--', linewidth=1.0, color='orange')
+    # Selector params
+    if swirl.params['cluster_decision']=='rho-delta':
+        delta_opt = swirl.params['cluster_params'][0]
+        rho_opt = swirl.params['cluster_params'][1]
+        rho_cutoff = np.mean(rho)*rho_opt
+        delta_cutoff = np.std(delta)*delta_opt
+        gamma_cutoff = rho_cutoff*delta_cutoff
+        axes[0].axvline(rho_cutoff, linestyle=':', linewidth=1.0, color='orange')
+        axes[0].axhline(delta_cutoff, linestyle=':', linewidth=1.0, color='orange')
+    elif swirl.params['cluster_decision']=='gamma':
+        gamma_opt = swirl.params['cluster_params'][0]
+        alpha = swirl.params['cluster_params'][1]
+        gamma_cutoff = gamma_opt*np.min(delta)*(np.max(rho)**alpha)
+        xgamma = np.linspace(0.001, 1, 500)
+        ygamma = gamma_cutoff/(xgamma**alpha)
+        axes[0].plot(xgamma, ygamma, linestyle='--', linewidth=1.0, color='orange')
+    
     # Axes
     axes[0].set_xlim([0, 1.05])
     axes[0].set_ylim([1e-3, 2.0])
@@ -248,11 +253,15 @@ def plot_decision(swirl, save=False):
     # Bottom plot
     # Scatter
     n_gamma = np.arange(gamma.shape[0])
+    if swirl.params['cluster_decision']=='gamma':
+        gamma = delta/(rho**alpha)
+        gamma = gamma/np.max(gamma)
     axes[1].plot(n_gamma, gamma, marker='o', markersize=2.7,
                  color='gray', linestyle='none')
     # Thresholds
-    axes[1].axhline(gamma_cutoff, linestyle='--',
-                    linewidth=1.0, color='orange')
+    if swirl.params['cluster_decision']=='gamma':
+        axes[1].axhline(gamma_cutoff, linestyle='--',
+                        linewidth=1.0, color='orange')
     # Axes
     axes[1].set_yscale('log')
     axes[1].set_xlim([0, gamma.shape[0]*1.05])

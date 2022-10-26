@@ -88,8 +88,8 @@ class Identification:
         cluster_params : list
             List of parameters for the selection of cluster centers in the clustering
             process. The list must contain three entries, all floats: 
-            [rho_p, delta_p, gamma_p]
-            - Default : [1.0, 0.5, 2.0]
+            [rho_p, delta_p] or [gamma_p, alpha]
+            - Default : [1.0, 0.5, 2.0] or [2.0, 1.0]
         noise_param : float
             Parameter to remove noisy cells from identification process.
             - Default : 1.0

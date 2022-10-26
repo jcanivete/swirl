@@ -411,14 +411,18 @@ def clustering(d,
         peaks = np.where(rho_tot >= rho_opt*np.mean(rho_fc), 1, 0)
         peaks = peaks*np.where(delta_tot >= delta_opt*np.std(delta_fc), 1, 0)
     elif clust_selector == 'gamma':
-        gamma_opt = clust_options[2]
+        # In this case clust_options[0 and 1] are not thresholds in rho or delta
+        # So we use them to change the shape of the curve as delta = gamma/rho**alpha
+        # and usually alpha < 1.0 and gamma_opt > 1.0 but close to 1.0
+        gamma_opt = clust_options[0]
+        alpha = clust_options[1] 
         # New
         # Idea: threshold should be slighlty larger than delta_min at rho_max
         # in the gamma approach
         delta_min = np.min(delta_tot)
         rho_max = np.max(rho_tot)
-        gamma_param = 2.*gamma_opt*delta_min*rho_max
-        peaks = np.where(gamma >= gamma_param, 1, 0)
+        gamma_param = 2.*gamma_opt*delta_min*(rho_max**alpha)
+        peaks = np.where(delta_tot >= gamma_param/(rho_tot**alpha), 1, 0)
 
     # number of peaks (clusters)
     Npeaks = np.sum(peaks)

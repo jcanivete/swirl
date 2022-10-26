@@ -137,10 +137,12 @@ The `Identification` class accepts a number of different parameters that one mig
     The method used to select the cluster centers in the clustering process.
     'delta-rho' : Use the delta and rho criteria to select the cluster centers.
     'gamma' : Use the gamma criterion to select the cluster centers.
-- `cluster_params` [list] = [1.0, 0.5, 2.0]  
+- `cluster_params` [list] = [1.0, 1.0]  
     List of parameters for the selection of cluster centers in the clustering
-    process. The list must contain three entries, which correspond to the parameters 
-    $delta_p$, $rho_p$, $gamma_p$.
+    process. The list must contain two entries. Depending on the selected `cluster_decision`, these entries are: 
+    - if `cluster_decision = delta-rho`: [$p_{\delta}$, $p_{\rho}$] and $\rho_{\rm th} = p_{\rho} \mu_{\rho}$, $\delta_{\rm th} = p_{\delta} \sigma_{\delta}$. 
+    - if `cluster_decision = gamma`: [$p_{\gamma}$, $\alpha$] and $\delta_{\rm th} = p_{\gamma} \delta_{\rm min} \rho_{\rm max}^{\alpha}/\rho^{\alpha}$.
+    Typical values are $p_{\delta} = 1.0$, $p_{\rho} = 0.5$, $p_{\gamma} = 2.0$, and $\alpha = 1.0$.
 - `noise_param` [float] = 1.0  
     Parameter to remove noisy cells from the identification process. It correspond to the parameter
     $r_p$. We recommend values $\gtrsim 1.0$.
