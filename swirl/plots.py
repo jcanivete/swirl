@@ -254,8 +254,8 @@ def plot_decision(swirl, save=False):
     # Scatter
     n_gamma = np.arange(gamma.shape[0])
     if swirl.params['cluster_decision']=='gamma':
-        gamma = delta/(rho**alpha)
-        gamma = gamma/np.max(gamma)
+        gamma = delta*(rho**alpha)
+        gamma = gamma[gamma.argsort()]/np.max(gamma)
     axes[1].plot(n_gamma, gamma, marker='o', markersize=2.7,
                  color='gray', linestyle='none')
     # Thresholds
