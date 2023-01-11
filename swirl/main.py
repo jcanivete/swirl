@@ -11,7 +11,7 @@ This code contains the main structure of the SWIRL code,
 that is the SWIRL Identification class.
 """
 # Imports
-from dataclasses import dataclass
+# from dataclasses import dataclass
 import time
 from typing import Type
 import h5py
