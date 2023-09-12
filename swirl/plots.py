@@ -41,8 +41,8 @@ def plot_rortex(swirl, f_quiver=6, save=False):
     xrange = np.arange(0, nx_grid)
     yrange = np.arange(0, ny_grid)
     xgrid, ygrid = np.meshgrid(xrange, yrange)
-    xgrid[...] = xgrid[...].T
-    ygrid[...] = ygrid[...].T
+    xgrid = xgrid.T
+    ygrid = ygrid.T
     # Access velocity field
     vx = swirl.v.x
     vy = swirl.v.y
@@ -74,9 +74,9 @@ def plot_rortex(swirl, f_quiver=6, save=False):
     axes.contour(xgrid,ygrid,swirl.rortex[0],levels=[0], colors=['gray'])
     axes.contour(xgrid,ygrid,-swirl.rortex[0],levels=[0], colors=['gray'])
     # Axes
-    axes.set_ylim([0, nx_grid+1])
-    axes.set_xlim([0, ny_grid+1])
-    axes.set_aspect('equal')
+    axes.set_ylim([0, ny_grid+1])
+    axes.set_xlim([0, nx_grid+1])
+    #axes.set_aspect('equal')
     axes.tick_params(axis="both", direction="in",
                         which="both", right=True, top=True)
     axes.minorticks_on()
@@ -121,8 +121,8 @@ def plot_gevc_map(swirl, f_quiver=6, save=False):
     xrange = np.arange(0, nx_grid)
     yrange = np.arange(0, ny_grid)
     xgrid, ygrid = np.meshgrid(xrange, yrange)
-    xgrid[...] = xgrid[...].T
-    ygrid[...] = ygrid[...].T
+    xgrid = xgrid.T
+    ygrid = ygrid.T
     # Access velocity field
     vx = swirl.v.x
     vy = swirl.v.y
@@ -166,9 +166,9 @@ def plot_gevc_map(swirl, f_quiver=6, save=False):
                 )
     
     # Axes
-    axes.set_ylim([0, nx_grid+1])
-    axes.set_xlim([0, ny_grid+1])
-    axes.set_aspect('equal')
+    axes.set_ylim([0, ny_grid+1])
+    axes.set_xlim([0, nx_grid+1])
+    #axes.set_aspect('equal')
     axes.tick_params(axis="both", direction="in",
                      which="both", right=True, top=True)
     axes.minorticks_on()
@@ -297,8 +297,8 @@ def plot_vortices(swirl, f_quiver=6, save=False):
     xrange = np.arange(0, nx_grid)
     yrange = np.arange(0, ny_grid)
     xgrid, ygrid = np.meshgrid(xrange, yrange)
-    xgrid[...] = xgrid[...].T
-    ygrid[...] = ygrid[...].T
+    xgrid = xgrid.T
+    ygrid = ygrid.T
     # Access velocity field
     vx = swirl.v.x
     vy = swirl.v.y
@@ -366,9 +366,9 @@ def plot_vortices(swirl, f_quiver=6, save=False):
         ax.add_patch(circle)
 
     # Axes
-    ax.set_ylim([0, nx_grid+1])
-    ax.set_xlim([0, ny_grid+1])
-    ax.set_aspect('equal')
+    ax.set_ylim([0, ny_grid+1])
+    ax.set_xlim([0, nx_grid+1])
+    #ax.set_aspect('equal')
     ax.tick_params(axis="both", direction="in",
                    which="both", right=True, top=True)
     ax.minorticks_on()
