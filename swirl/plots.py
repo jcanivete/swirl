@@ -61,9 +61,7 @@ def plot_rortex(swirl, f_quiver=6, save=False):
                 vx[::f_quiver, ::f_quiver],
                 vy[::f_quiver, ::f_quiver],
                 angles='xy',
-                units='xy',
-                scale=0.1,
-                width=0.8
+                units='xy'
                 )
     # Plot Criteria
     vmax = np.max(np.abs(swirl.rortex[0]))*0.7
@@ -160,9 +158,7 @@ def plot_gevc_map(swirl, f_quiver=6, save=False):
                 vx[::f_quiver, ::f_quiver],
                 vy[::f_quiver, ::f_quiver],
                 angles='xy',
-                units='xy',
-                scale=0.1,
-                width=0.8
+                units='xy'
                 )
     
     # Axes
@@ -321,9 +317,7 @@ def plot_vortices(swirl, f_quiver=6, save=False):
               vx[::f_quiver, ::f_quiver],
               vy[::f_quiver, ::f_quiver],
               angles='xy',
-              units='xy',
-              scale=0.1,
-              width=0.8
+              units='xy'
               )
     # Scatter Noise
     ax.scatter(noise_x,
