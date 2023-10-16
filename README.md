@@ -7,10 +7,11 @@
 
 
              (c) IRSOL, 11.04.2022
+```
 
-Author: *José Roberto Canivete Cuissa*
-Email: *jose.canivete@irsol.usi.ch*
-``` 
+Author: _José Roberto Canivete Cuissa_   
+Email: _jose.canivete@irsol.usi.ch_
+ 
 ----
 
 # SWIRL code
@@ -153,8 +154,8 @@ Finally, one can also select the option `verbose=False` in the initialization of
 ----
 
 ## References
-[Canivete Cuissa, J. R., Steiner, O., 2022, A&A (submitted)](...)  
-[Liu, C., Gao, Y., Tian, S., & Dong, X. 2018, Physics of Fluids, 30, 035103](https://ui.adsabs.harvard.edu/abs/2018PhFl...30c5103L/abstract)  
-[Rodriguez, A. & Laio, A. 2014, Science, 344, 1492](https://ui.adsabs.harvard.edu/abs/2014Sci...344.1492R/abstract)  
-[Tian, S., Gao, Y., Dong, X., & Liu, C. 2018, Journal of Fluid Mechanics, 849, 312](https://ui.adsabs.harvard.edu/abs/2018JFM...849..312T/abstract)
+1. [Canivete Cuissa, J. R., Steiner, O., 2022, A&A 668, A118](https://ui.adsabs.harvard.edu/abs/2022A%26A...668A.118C/abstract)  
+2. [Liu, C., Gao, Y., Tian, S., & Dong, X. 2018, Physics of Fluids, 30, 035103](https://ui.adsabs.harvard.edu/abs/2018PhFl...30c5103L/abstract)  
+3. [Rodriguez, A. & Laio, A. 2014, Science, 344, 1492](https://ui.adsabs.harvard.edu/abs/2014Sci...344.1492R/abstract)
+4. [Tian, S., Gao, Y., Dong, X., & Liu, C. 2018, Journal of Fluid Mechanics, 849, 312](https://ui.adsabs.harvard.edu/abs/2018JFM...849..312T/abstract)
 ----
