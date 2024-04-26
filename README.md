@@ -54,16 +54,16 @@ The SWIRL code requires Python 3 and makes use of the following Python libraries
 ----
 
 ## How to install
-Download or clone this github repository into your machine. To import the module, run the following lines
+Download or clone this github repository into your machine. 
+
+The easiest way to install the code is to use pip:
 ```
->>> import sys
->>> sys.path.append(r'\path\to\the\folder')
->>> import swirl
+python3 -m pip install . 
 ```
 
-Alternatively, you can add the folder where you saved the code to your PYTHONPATH and simply import the swirl module:
+If you're a developer and want to install the code in editable mode, you can run:
 ```
->>> import swirl
+python3 -m pip install -e .
 ```
 
 ## How to run

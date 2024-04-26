@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swirl"
+description = "The SWirl Identification by Rotation centers Localization (SWIRL) is an automated vortex identification algorithm written in python and based on the _Estimated Vortex Center_ (EVC) method [Canivete Cuissa & Steiner, 2022]. Given a two-dimensional velocity field defined on a Cartesian grid and the grid cell size in physical units, the SWIRL code returns a list with the identified vortical structures and their main properties."
+version = "1.0.0"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["vortex", "fluid dynamics", "physics", "simulation"]
+authors = [
+    { name = "José Roberto Canivete Cuissa", email = "jose.canivete@irsol.usi.ch" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Fluid Dynamics",
+  "Topic :: Scientific/Engineering :: Physics",
+
+]
+dependencies = ["numpy>=1.21.6", 
+		"scipy>=1.4.1",
+		"matplotlib>=3.3.2",
+		"h5py>=2.10.0"]
+[tool.setuptools.packages.find]
+where = ["swirl"]
+
+[project.urls]
+Documentation = "https://github.com/jcanivete/swirl/blob/main/README.md"
+Issues = "https://github.com/jcanivete/swirl/issues"
+Source = "https://github.com/jcanivete/swirl"
+
+
+[tool.pdm]
+distribution = true
+
+[tool.setuptools]
+include-package-data = true
+
+
