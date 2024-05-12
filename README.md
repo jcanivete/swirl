@@ -45,25 +45,23 @@ The algorithm is implemented in the SWIRL code and it has been tested on (noisy)
 ----
 
 ## Dependencies
-The SWIRL code requires Python 3 and makes use of the following Python libraries:
-- numpy      (tested with _v. 1.21.6_)
-- scipy      (tested with _v. 1.4.1_)
-- h5py       (tested with _v. 2.10.0_)
-- matplotlib (tested with _v. 3.3.2_)
+The SWIRL code requires Python >= 3.10 and makes use of the following Python libraries:
+- numpy      
+- scipy      
+- h5py       
+- matplotlib 
 
 ----
 
 ## How to install
-Download or clone this github repository into your machine. 
+Make sure to have Python >= 3.10 installed in your system and the upgrated version of pip running this command:
+```
+python3 -m pip install --upgrade pip
+```
 
 The easiest way to install the code is to use pip:
 ```
-python3 -m pip install . 
-```
-
-If you're a developer and want to install the code in editable mode, you can run:
-```
-python3 -m pip install -e .
+pip install swirl-code
 ```
 
 ## How to run
